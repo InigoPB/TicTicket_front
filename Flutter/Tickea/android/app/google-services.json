@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "255799645178",
+    "project_id": "tickticket-6c229",
+    "storage_bucket": "tickticket-6c229.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255799645178:android:516058b9112e150121ca43",
+        "android_client_info": {
+          "package_name": "com.example.tik_ticket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApbHj2813PS9MYOogkyJCeO2I8ApgmDeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
