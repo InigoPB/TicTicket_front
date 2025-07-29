@@ -9,7 +9,7 @@ class TickeaApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
-      title: 'TICKea',
+      title: 'Tickea',
       theme: ThemeData.dark(),
     );
   }
