@@ -30,22 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> register() async {
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailCtrl.text.trim(),
-        password: passwordCtrl.text.trim(),
-      );
-      setState(() {
-        mensaje = '🎉 Usuario creado con éxito';
-      });
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        mensaje = '❌ Error al registrarse: ${e.message}';
-      });
-    }
-  }
-
   void goToRegister() {
     context.go('/register');
   }
