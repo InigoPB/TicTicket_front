@@ -46,6 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void goToRegister() {
+    context.go('/register');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(onPressed: login, child: const Text('Iniciar sesión')),
-            ElevatedButton(onPressed: register, child: const Text('Registrarse')),
+            ElevatedButton(onPressed: goToRegister, child: const Text('Registrarse')),
             const SizedBox(height: 20),
             Text(mensaje, style: const TextStyle(color: Colors.red)),
           ],
