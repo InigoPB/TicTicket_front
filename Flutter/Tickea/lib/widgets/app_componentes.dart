@@ -73,6 +73,7 @@ class AppBotonImagen extends StatefulWidget {
   final String imagenNormal;
   final String imagenPulsado;
   final VoidCallback onPressed;
+  final Color? color;
 
   const AppBotonImagen({
     super.key,
@@ -82,6 +83,7 @@ class AppBotonImagen extends StatefulWidget {
     required this.imagenNormal,
     required this.imagenPulsado,
     required this.onPressed,
+    this.color,
   });
 
   @override
@@ -93,60 +95,96 @@ class _AppBotonImagenState extends State<AppBotonImagen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppTamanios.sm),
-          child: AppTexto.titulo(widget.textoTitulo),
-        ),
-        GestureDetector(
-          onTapDown: (_) => setState(() => _presionado = true),
-          onTapUp: (_) {
-            setState(() => _presionado = false);
-            widget.onPressed();
-          },
-          onTapCancel: () => setState(() => _presionado = false),
-          child: Container(
-            width: widget.tamAncho,
-            height: widget.tamAlto,
-            decoration: BoxDecoration(
-              color: AppColores.primario,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: _presionado ? AppColores.secundariOscuro : AppColores.primariOscuro,
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center, // 👈 centra verticalmente dentro de su contenedor padre
+        children: [
+          GestureDetector(
+            onTapDown: (_) => setState(() => _presionado = true),
+            onTapUp: (_) {
+              setState(() => _presionado = false);
+              widget.onPressed();
+            },
+            onTapCancel: () => setState(() => _presionado = false),
+            child: Container(
+              width: widget.tamAncho,
+              height: widget.tamAlto,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: _presionado ? AppColores.fondo : AppColores.secundario,
+                  width: _presionado ? 1 : 3,
+                ),
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    _presionado ? widget.imagenPulsado : widget.imagenNormal,
+                    fit: BoxFit.contain,
+                  ),
+                ],
               ),
             ),
-            child: Image.asset(
-              _presionado ? widget.imagenPulsado : widget.imagenNormal,
-              fit: BoxFit.contain,
-            ),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppTamanios.sm),
+            child: AppTexto.titulo(widget.textoTitulo, color: _presionado ? AppColores.secundariOscuro : null),
+          ),
+        ],
+      ),
     );
   }
 }
 
 // Campo de texto con estilo TICKea
-class AppCampoTexto extends StatelessWidget {
+class AppCampoTexto extends StatefulWidget {
   final double tamAncho;
   final String titulo;
   final TextEditingController controlador;
-  final bool estaActivo;
+  final bool modoClave;
 
   const AppCampoTexto({
     super.key,
     required this.tamAncho,
     required this.titulo,
     required this.controlador,
-    this.estaActivo = false,
+    this.modoClave = false,
   });
+
+  @override
+  State<AppCampoTexto> createState() => _AppCampoTextoState();
+}
+
+class _AppCampoTextoState extends State<AppCampoTexto> {
+  late FocusNode _focusNode;
+  bool estaActivo = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    _focusNode.addListener(() {
+      setState(() {
+        estaActivo = _focusNode.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // el dispose lo metemos para resetear, limpia para no dejar cosas por el camino y ahorrar memoria.
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorBorde = estaActivo ? AppColores.secundario : AppColores.grisClaro;
-    final colorTitulo = estaActivo ? AppColores.secundario : AppColores.textoOscuro;
+    final colorTitulo = estaActivo ? AppColores.primario : AppColores.grisClaro;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -156,11 +194,11 @@ class AppCampoTexto extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: AppTamanios.md),
-            child: AppTexto.subtitulo(titulo, align: TextAlign.start, color: colorTitulo),
+            padding: const EdgeInsets.only(top: AppTamanios.xs),
+            child: AppTexto.subtitulo(widget.titulo, align: TextAlign.start, color: colorTitulo),
           ),
           Container(
-            width: tamAncho,
+            width: widget.tamAncho,
             height: 48,
             decoration: BoxDecoration(
               color: AppColores.falsoBlanco,
@@ -168,14 +206,16 @@ class AppCampoTexto extends StatelessWidget {
               border: Border.all(
                 color: colorBorde,
                 width: 2,
-                style: BorderStyle.solid, // No existe estilo dashed nativo en Flutter
+                style: BorderStyle.solid,
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 8),
             alignment: Alignment.centerLeft,
             child: TextField(
-              controller: controlador,
+              focusNode: _focusNode,
+              controller: widget.controlador,
               style: AppEstiloTexto.cuerpo,
+              obscureText: widget.modoClave,
               decoration: const InputDecoration(
                 border: InputBorder.none,
               ),

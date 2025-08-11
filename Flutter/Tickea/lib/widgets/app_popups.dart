@@ -4,7 +4,7 @@ import 'package:tickea/core/theme/app_styles.dart';
 
 import 'app_componentes.dart';
 
-class Popup {
+class AppPopup {
   static void popupDosBotones({
     required BuildContext context,
     required String titulo,

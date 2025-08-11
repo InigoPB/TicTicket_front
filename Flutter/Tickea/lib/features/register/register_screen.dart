@@ -35,7 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //Validación de campos vacíos
       if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty || repasswordCtrl.text.isEmpty || userCtrl.text.isEmpty) {
         setState(() {
-          Popup.popupDosBotones(
+          AppPopup.popupDosBotones(
               context: context,
               titulo: '⚠️',
               contenido: 'Rellena todos los campos obligatorios',

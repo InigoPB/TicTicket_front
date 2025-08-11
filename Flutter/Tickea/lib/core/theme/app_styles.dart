@@ -33,11 +33,16 @@ class AppFonts {
 // 4. Estilo de Texto
 class AppEstiloTexto {
   static const TextStyle titulo = TextStyle(
-    fontFamily: AppFonts.mainFont,
-    fontSize: AppTamanios.lg,
-    fontWeight: FontWeight.bold,
-    color: AppColores.primariOscuro,
-  ); //hacemos variables de los diferentes estilos de texto.
+      fontFamily: AppFonts.mainFont,
+      fontSize: AppTamanios.lg,
+      fontWeight: FontWeight.bold,
+      color: AppColores.textoOscuro,
+      shadows: [
+        Shadow(offset: Offset(.6, .6), color: AppColores.textoOscuro),
+        Shadow(offset: Offset(-.6, .6), color: AppColores.textoOscuro),
+        Shadow(offset: Offset(.6, -.6), color: AppColores.textoOscuro),
+        Shadow(offset: Offset(-.6, -.6), color: AppColores.textoOscuro),
+      ]); //hacemos variables de los diferentes estilos de texto.
 
   static const TextStyle subtitulo = TextStyle(
     fontFamily: AppFonts.mainFont,
@@ -102,13 +107,21 @@ class AppTexto {
     TextAlign align = TextAlign.start,
     int maxLines = 1,
     TextOverflow overflow = TextOverflow.ellipsis,
+    Color? color,
   }) {
     return Text(
       texto,
       textAlign: align,
       maxLines: maxLines,
       overflow: overflow,
-      style: AppEstiloTexto.titulo,
+      style: color != null
+          ? AppEstiloTexto.titulo.copyWith(color: color, shadows: [
+              Shadow(offset: const Offset(.6, .6), color: color),
+              Shadow(offset: const Offset(-.6, .6), color: color),
+              Shadow(offset: const Offset(.6, -.6), color: color),
+              Shadow(offset: const Offset(-.6, -.6), color: color),
+            ])
+          : AppEstiloTexto.titulo,
     );
   }
 

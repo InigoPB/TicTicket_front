@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tickea/core/theme/app_styles.dart';
+import 'package:tickea/widgets/app_popups.dart';
+import '../../widgets/app_componentes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,13 +23,23 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailCtrl.text.trim(),
         password: passwordCtrl.text.trim(),
       );
-      setState(() {
-        mensaje = '✅ Login exitoso, bienvenido compi';
-      });
+
+      goToPrincipal();
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        mensaje = '💥 Error al iniciar sesión: ${e.message}';
-      });
+      setState(
+        () {
+          AppPopup.popupDosBotones(
+              context: context,
+              contenido: 'Error al iniciar sesión: ${e.message}',
+              exito: false,
+              goBotonA: '/register',
+              goBotonB: '/login',
+              textoIr: "Registrarse",
+              textoVolver: "Volver",
+              titulo: '💥');
+        },
+      );
+      return;
     }
   }
 
@@ -34,26 +47,47 @@ class _LoginScreenState extends State<LoginScreen> {
     context.go('/register');
   }
 
+  void goToPrincipal() {
+    context.go('/principal');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Tickea Login')),
+      backgroundColor: AppColores.fondo,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            TextField(
-              controller: emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email'),
+            AppCampoTexto(
+              controlador: emailCtrl,
+              tamAncho: double.infinity,
+              titulo: 'EMAIL',
             ),
-            TextField(
-              controller: passwordCtrl,
-              decoration: const InputDecoration(labelText: 'Contraseña'),
-              obscureText: true,
+            const SizedBox(height: 8),
+            AppCampoTexto(
+              controlador: passwordCtrl,
+              tamAncho: double.infinity,
+              titulo: 'CONTRASEÑA',
+              modoClave: true,
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: login, child: const Text('Iniciar sesión')),
-            ElevatedButton(onPressed: goToRegister, child: const Text('Registrarse')),
+            const SizedBox(height: 24),
+            AppBotonPrimario(
+              //Btn de inicio
+              tamAncho: 240,
+              tamAlto: 48,
+              texto: 'Inicio',
+              onPressed: login,
+            ),
+            const SizedBox(height: 24),
+            AppBotonPrimario(
+              //Btn de Registro
+              tamAncho: 240,
+              tamAlto: 48,
+              texto: 'Registrarse',
+              onPressed: goToRegister,
+            ),
             const SizedBox(height: 20),
             Text(mensaje, style: const TextStyle(color: Colors.red)),
           ],
