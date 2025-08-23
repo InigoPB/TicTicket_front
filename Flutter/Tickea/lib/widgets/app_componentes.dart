@@ -1,6 +1,8 @@
 // Archivo: lib/core/widgets/app_componentes.dart
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tickea/core/responsive/app_responsive.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 
 // Botón Primario
@@ -69,21 +71,21 @@ class AppBotonPrimario extends StatelessWidget {
 class AppBotonImagen extends StatefulWidget {
   final double tamAncho;
   final double tamAlto;
-  final String textoTitulo;
+  final String? textoTitulo;
   final String imagenNormal;
   final String imagenPulsado;
   final VoidCallback onPressed;
-  final Color? color;
+  final bool? isBorde;
 
   const AppBotonImagen({
     super.key,
     required this.tamAncho,
     required this.tamAlto,
-    required this.textoTitulo,
+    this.textoTitulo,
     required this.imagenNormal,
     required this.imagenPulsado,
     required this.onPressed,
-    this.color,
+    this.isBorde = true, // Si no se quiere borde, se puede pasar false
   });
 
   @override
@@ -113,10 +115,12 @@ class _AppBotonImagenState extends State<AppBotonImagen> {
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                  color: _presionado ? AppColores.fondo : AppColores.secundario,
-                  width: _presionado ? 1 : 3,
-                ),
+                border: widget.isBorde!
+                    ? Border.all(
+                        color: _presionado ? AppColores.fondo : AppColores.secundario,
+                        width: _presionado ? 1 : 3,
+                      )
+                    : null,
               ),
               child: Stack(
                 fit: StackFit.expand,
@@ -129,10 +133,18 @@ class _AppBotonImagenState extends State<AppBotonImagen> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppTamanios.sm),
-            child: AppTexto.titulo(widget.textoTitulo, color: _presionado ? AppColores.secundariOscuro : null),
-          ),
+          if ((widget.textoTitulo ?? '').trim().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppTamanios.sm),
+              child: AppTexto.titulo(
+                widget.textoTitulo!,
+              ), /*Ojo este que bonito:
+              decimos que si el titulo existe pinta el titulo, sino, lo pinta vacio;
+              En la misma orden Trimeamos y le decimos que si contiene algo, pinte ese algo
+              haciendo su widget. aseguramos que va a ir un widget aunque antes venga null porque en caso
+              de ser null le hemos dicho que será un campo vacio y en caso de ser un campo vacio,
+              no creará widget... */
+            ),
         ],
       ),
     );
@@ -222,6 +234,102 @@ class _AppCampoTextoState extends State<AppCampoTexto> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+SnackBar snackBarTickea({required Color colorFondo, required String texto}) {
+  return SnackBar(
+    content: Text(texto),
+    backgroundColor: colorFondo,
+    duration: const Duration(seconds: 3),
+  );
+}
+
+class AppCabecero extends StatelessWidget implements PreferredSizeWidget {
+  //Vamos a intentar hacerlo responsive para otros tamaños.
+  const AppCabecero({
+    super.key,
+    this.mostrarAtras = true,
+    this.onAtras,
+    this.backgroundColor = AppColores.fondo,
+    this.alturaBase = 64.0,
+    this.logoAsset = 'assets/img/logo_bar.png',
+  });
+
+  final bool mostrarAtras;
+  final VoidCallback? onAtras;
+  final Color backgroundColor;
+  final double alturaBase;
+  final String logoAsset;
+
+  @override
+  Size get preferredSize => Size.fromHeight(alturaBase);
+
+  @override
+  Widget build(BuildContext context) {
+    final escalaTexto = MediaQuery.of(context).textScaler.scale(1.0).clamp(1.0, 1.2);
+    final alto = preferredSize.height;
+    final flechaH = (40.0).clamp(32.0, 48.0);
+    final flechaW = (64.0).clamp(56.0, 72.0);
+
+    return SafeArea(
+      top: true,
+      child: Container(
+        height: alto,
+        padding: EdgeInsets.only(
+          left: MediaQuery.of(context).padding.left + AppTamanios.md,
+          right: MediaQuery.of(context).padding.right + AppTamanios.md,
+        ), //EdgeInsets.symmetric(horizontal: paddingH),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          border: const Border(
+            bottom: BorderSide(
+              color: AppColores.grisClaro,
+              style: BorderStyle.solid, // solid
+            ),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Izquierda: botón atrás (opcional)
+            if (mostrarAtras)
+              AppBotonImagen(
+                tamAncho: flechaH,
+                tamAlto: flechaH,
+                isBorde: false,
+                imagenNormal: 'assets/img/flecha_1.png',
+                imagenPulsado: 'assets/img/flecha_2.png',
+                onPressed: onAtras ??
+                    () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/principal');
+                      }
+                    },
+              )
+            else
+              SizedBox(width: flechaW + AppTamanios.sm), // Espacio porsi flecha no está
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Tickea',
+                  style: AppEstiloTexto.subtitulo.copyWith(
+                    fontSize: (AppTamanios.md * escalaTexto).clamp(14, 18),
+                    color: AppColores.primario,
+                  ),
+                ),
+                const SizedBox(width: AppTamanios.base),
+                Image.asset(logoAsset),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

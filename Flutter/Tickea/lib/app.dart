@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/routes/app_router.dart';
 
 class TickeaApp extends StatelessWidget {
@@ -11,6 +12,16 @@ class TickeaApp extends StatelessWidget {
       routerConfig: appRouter,
       title: 'Tickea',
       theme: ThemeData.dark(),
+      //Para poder usar diferentes bibliotecas en español
+      supportedLocales: const [
+        Locale('es', 'ES'), // Español
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
     );
   }
 }

@@ -11,8 +11,8 @@ class PrincipalScreen extends StatefulWidget {
 }
 
 class _PrincipalScreenState extends State<PrincipalScreen> {
-  void goToPrincipal() {
-    context.go('/principal');
+  void goToRute(String ruta) {
+    context.go(ruta);
   }
 
   @override
@@ -29,7 +29,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
             textoTitulo: 'Nuevo Registro',
             imagenNormal: 'assets/img/icon_CAMARA_btn_inicio.png',
             imagenPulsado: 'assets/img/icon_CAMARA_btn_inicio_CLICK.png',
-            onPressed: goToPrincipal,
+            onPressed: () => goToRute('/nuevoRegistro'),
           ),
           AppBotonImagen(
             tamAncho: 200,
@@ -37,7 +37,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
             textoTitulo: 'Historico',
             imagenNormal: 'assets/img/icon_CALENDARIO_btn_inicio.png',
             imagenPulsado: 'assets/img/icon_CALENDARIO_btn_inicio_CLICK.png',
-            onPressed: goToPrincipal,
+            onPressed: () => goToRute('/historico'),
           ),
         ],
       ),

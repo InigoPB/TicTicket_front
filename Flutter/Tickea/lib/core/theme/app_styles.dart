@@ -17,12 +17,12 @@ class AppColores {
 //2. Tamaños
 class AppTamanios {
   //usamos el 8 como base unitaria para respetar nuestra teoria de diseño
-  static const double s = 8.0;
-  static const double xs = s * 0.5; // 4.0
-  static const double sm = s; // 8.0
-  static const double md = s * 2; // 16.0
-  static const double lg = s * 3; // 24.0
-  static const double xl = s * 4; // 32.0
+  static const double base = 8.0;
+  static const double xs = base * 0.5; // 4.0
+  static const double sm = base; // 8.0
+  static const double md = base * 2; // 16.0
+  static const double lg = base * 3; // 24.0
+  static const double xl = base * 4; // 32.0
 }
 
 // 3. Fuentes
@@ -231,5 +231,52 @@ class AppTexto {
       overflow: overflow,
       style: AppEstiloTexto.error,
     );
+  }
+}
+
+// 6. Nagrita (esta fuente no tiene negrita, asi que vamos a forzarla)
+
+class AppExtraBold {
+  static List<Shadow> extraBold(Color color, double grosor) {
+    return [
+      Shadow(
+        offset: Offset(grosor, grosor),
+        color: color,
+      ),
+      Shadow(
+        offset: Offset(-grosor, grosor),
+        color: color,
+      ),
+      Shadow(
+        offset: Offset(grosor, -grosor),
+        color: color,
+      ),
+      Shadow(
+        offset: Offset(-grosor, -grosor),
+        color: color,
+      ),
+    ];
+  }
+}
+
+// 7. Sombra dinamica:
+
+class AppSombra {
+  static List<BoxShadow> contenedores({
+    Color? color = AppColores.primariOscuro,
+    double? ejeH = .5,
+    double? ejeV = .5,
+    double? opacidad = .5,
+    double? difuminado = 4,
+    BlurStyle? direccion = BlurStyle.normal,
+  }) {
+    return [
+      BoxShadow(
+        offset: Offset(ejeH!, ejeV!),
+        color: color!.withOpacity(opacidad!),
+        blurRadius: difuminado!,
+        blurStyle: direccion!,
+      ),
+    ];
   }
 }

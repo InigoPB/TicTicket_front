@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/login/login_screen.dart';
-import '../../features/principal/principal_screen.dart';
-import '../../features/register/register_screen.dart';
-import '../../features/splash/splash_screen.dart';
+import 'package:tickea/features/nuevo_registro/nuevo_registro_screen.dart';
+import 'package:tickea/features/historico/historico_screen.dart';
+import 'package:tickea/features/login/login_screen.dart';
+import 'package:tickea/features/principal/principal_screen.dart';
+import 'package:tickea/features/register/register_screen.dart';
+import 'package:tickea/features/splash/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/splash',
+  initialLocation: '/nuevoRegistro',
   routes: [
     GoRoute(
       path: '/splash',
@@ -30,6 +32,18 @@ final GoRouter appRouter = GoRouter(
       path: '/principal',
       builder: (BuildContext context, GoRouterState state) {
         return const PrincipalScreen();
+      },
+    ),
+    GoRoute(
+      path: '/nuevoRegistro',
+      builder: (BuildContext context, GoRouterState state) {
+        return const NuevoRegistroScreen();
+      },
+    ),
+    GoRoute(
+      path: '/historico',
+      builder: (BuildContext context, GoRouterState state) {
+        return const HistoricoScreen();
       },
     ),
   ],
