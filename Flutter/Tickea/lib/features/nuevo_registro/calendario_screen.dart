@@ -54,29 +54,84 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
     setState(() {
       _diaInicio = soloFecha;
       _diaSeleccionado = soloFecha;
-      strFecha = _formatoFecha(soloFecha!);
+      strFecha = _formatoFecha(soloFecha);
     });
   }
 
+  void goToFoto() {
+    context.go('/principal');
+  }
+
   void _onAceptar() {
-    if (_diaSeleccionado == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTickea(colorFondo: AppColores.grisClaro, texto: 'Selecciona una fecha antes de continuar'));
+    final DateTime? seleccion = _diaSeleccionado;
+    // 1) Fecha no seleccionada
+    if (seleccion == null) {
+      AppPopup.alerta(
+        context: context,
+        titulo: 'Falta la fecha',
+        contenido: 'Selecciona una fecha antes de continuar.',
+        textoOk: 'Entendido',
+      );
       return;
     }
-    if (_isDiaRegistrado(_diaSeleccionado!)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          snackBarTickea(colorFondo: AppColores.grisClaro, texto: 'Selecciona una fecha que no esté ya selecionada'));
+
+    // 2) Día ya registrado (mock)
+    if (_isDiaRegistrado(seleccion)) {
+      AppPopup.alerta(
+        context: context,
+        titulo: 'Día ya registrado',
+        contenido: 'Selecciona una fecha que no esté ya registrada.',
+        textoOk: 'Vale',
+      );
       return;
     }
-    // TODO: Aquí ya tienes str_fecha listo. Ejemplo:
-    // TODO: crear carpeta temporal con str_fecha y navegar a Tomar foto.
-    // TODO: Crear un SnackBar personalizado de tickea (mensajito temporal)
-    // TODO: integrar navegación / creación de carpeta en pasos siguientes.
-    ScaffoldMessenger.of(context).showSnackBar(
-      snackBarTickea(colorFondo: AppColores.grisClaro, texto: 'Fecha confirmada: $strFecha'),
+
+    // 3) Confirmación si la fecha es distinta de hoy
+
+    final now = DateTime.now();
+    final hoy = DateTime(now.year, now.month, now.day);
+
+    final sel = DateTime(seleccion.year, seleccion.month, seleccion.day);
+    final esMismoDia = _isMismoDia(hoy, sel);
+
+    final strFechaFmt = _formatoFecha(sel); // "dd_MM_yyyy"
+    final strDiaSemana = DateFormat.EEEE('es').format(sel);
+// Actualiza el estado con mismo valor
+    setState(() => strFecha = strFechaFmt);
+
+    if (!esMismoDia) {
+      AppPopup.confirmacion(
+        context: context,
+        titulo: 'No es hoy!',
+        contenido: 'El dia seleccionado es $strDiaSemana $strFechaFmt. ¿Quieres continuar?',
+        textoSi: 'Sí, continuar',
+        textoNo: 'No, cambiar',
+        onSi: () {
+          ///TODO: guardar en provider + crear carpeta + navegar
+          goToFoto();
+        },
+        onNo: () {},
+        barrierDismissible: false,
+      );
+      return;
+    }
+
+    // 4) Si es hoy → seguimos (por ahora solo informamos)
+    AppPopup.alerta(
+      context: context,
+      alerta: false,
+      titulo: 'Has seleccionado hoy',
+      contenido: '$strDiaSemana $strFechaFmt.',
+      textoOk: 'Continuar',
+      onOk: () {
+        ///TODO: guardar en provider + crear carpeta + navegar
+        goToFoto();
+      },
     );
   }
+  // TODO: crear carpeta temporal con str_fecha y navegar a Tomar foto.
+  // TODO: Crear un SnackBar personalizado de tickea (mensajito temporal)
+  // TODO: integrar navegación / creación de carpeta en pasos siguientes.
 
   @override
   void initState() {
@@ -254,9 +309,13 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                       ),
                       onDaySelected: (diaSeleccionado, diaInicio) {
                         if (_isDiaRegistrado(diaSeleccionado)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            snackBarTickea(
-                                colorFondo: AppColores.error, texto: 'Lo siento, este día ya está registrado'),
+                          AppPopup.alerta(
+                            context: context,
+                            titulo: 'Día ya registrado',
+                            contenido: 'Lo siento, este día ya está registrado.',
+                            textoOk: 'Ok',
+                            barrierDismissible: false,
+                            alerta: true, // borde rojo
                           );
                           return;
                         }

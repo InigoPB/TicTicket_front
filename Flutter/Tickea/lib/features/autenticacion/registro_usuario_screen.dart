@@ -35,15 +35,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //Validación de campos vacíos
       if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty || repasswordCtrl.text.isEmpty || userCtrl.text.isEmpty) {
         setState(() {
-          AppPopup.popupDosBotones(
+          /*AppPopup.popupDosBotones(
               context: context,
-              titulo: '⚠️',
+              titulo: ,
               contenido: 'Rellena todos los campos obligatorios',
               goBotonA: '/register',
               goBotonB: '/login',
               exito: false,
               textoIr: 'Reintentar',
-              textoVolver: 'Login');
+              textoVolver: 'Login')*/
+          AppPopup.confirmacion(
+            context: context,
+            titulo: '⚠️ ¡¡Cuidado!!',
+            contenido: 'Rellena todos los campos obligatorios',
+            textoSi: 'Reintentar',
+            onSi: () {
+              Navigator.of(context).pop();
+            },
+            textoNo: 'Inicio',
+            onNo: () {
+              context.go('/login');
+            },
+          );
         });
         return;
       }

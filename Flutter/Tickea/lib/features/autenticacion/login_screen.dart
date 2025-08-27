@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } on FirebaseAuthException catch (e) {
       setState(
         () {
-          AppPopup.popupDosBotones(
+          /*AppPopup.popupDosBotones(
               context: context,
               contenido: 'Error al iniciar sesión: ${e.message}',
               exito: false,
@@ -36,7 +36,20 @@ class _LoginScreenState extends State<LoginScreen> {
               goBotonB: '/login',
               textoIr: "Registrarse",
               textoVolver: "Volver",
-              titulo: '💥');
+              titulo: '💥');*/
+          AppPopup.confirmacion(
+            context: context,
+            titulo: '💥 Ups!',
+            contenido: 'Error al iniciar sesión: ${e.message}',
+            textoSi: 'Registrarse',
+            onSi: () {
+              context.go('/register');
+            },
+            textoNo: 'Volver',
+            onNo: () {
+              Navigator.of(context).pop();
+            },
+          );
         },
       );
       return;
