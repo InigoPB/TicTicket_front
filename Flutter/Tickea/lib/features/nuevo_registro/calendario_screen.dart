@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tickea/core/formateadores/fecha_formato.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 import 'package:tickea/widgets/app_popups.dart';
 import 'package:tickea/widgets/app_componentes.dart';
@@ -8,6 +9,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:tickea/core/responsive/app_responsive.dart';
 import 'package:tickea/core/layouts/app_box_responsive.dart';
+import 'package:tickea/core/archivos/carpeta_temporal.dart';
+import 'package:tickea/features/registro/registro_provider.dart';
 
 ///TODO: Contemplar el tema de vacaciones. Que va a pasar cuando esta persona esté de vacaciones?
 
@@ -46,20 +49,19 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
         (d) => _isMismoDia(d, dia),
       );
 
-  String _formatoFecha(DateTime fecha) => DateFormat('dd_MM_yyyy').format(fecha);
-
   void _hoyBtn() {
     final DateTime hoy = DateTime.now();
     final DateTime soloFecha = DateTime(hoy.year, hoy.month, hoy.day);
+    context.read<RegistroProvider>().setFecha(soloFecha);
     setState(() {
       _diaInicio = soloFecha;
       _diaSeleccionado = soloFecha;
-      strFecha = _formatoFecha(soloFecha);
+      strFecha = fmtFecha(soloFecha);
     });
   }
 
   void goToFoto() {
-    context.go('/principal');
+    context.go('/nuevaFoto');
   }
 
   void _onAceptar() {
@@ -94,7 +96,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
     final sel = DateTime(seleccion.year, seleccion.month, seleccion.day);
     final esMismoDia = _isMismoDia(hoy, sel);
 
-    final strFechaFmt = _formatoFecha(sel); // "dd_MM_yyyy"
+    final strFechaFmt = fmtFecha(sel);
     final strDiaSemana = DateFormat.EEEE('es').format(sel);
 // Actualiza el estado con mismo valor
     setState(() => strFecha = strFechaFmt);
@@ -102,15 +104,20 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
     if (!esMismoDia) {
       AppPopup.confirmacion(
         context: context,
+        alerta: false,
         titulo: 'No es hoy!',
         contenido: 'El dia seleccionado es $strDiaSemana $strFechaFmt. ¿Quieres continuar?',
         textoSi: 'Sí, continuar',
         textoNo: 'No, cambiar',
-        onSi: () {
-          ///TODO: guardar en provider + crear carpeta + navegar
+        onSi: () async {
+          context.read<RegistroProvider>().setFecha(sel);
+          final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
+          debugPrint('[NuevoRegistro] Temp dir: ${dir.path}');
+          if (!mounted) return; //mounted
+          context.read<RegistroProvider>().setTempDirPath(dir.path);
           goToFoto();
         },
-        onNo: () {},
+        onNo: () async {},
         barrierDismissible: false,
       );
       return;
@@ -123,14 +130,17 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
       titulo: 'Has seleccionado hoy',
       contenido: '$strDiaSemana $strFechaFmt.',
       textoOk: 'Continuar',
-      onOk: () {
-        ///TODO: guardar en provider + crear carpeta + navegar
+      onOk: () async {
+        context.read<RegistroProvider>().setFecha(sel);
+        final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
+        if (!mounted) return;
+        context.read<RegistroProvider>().setTempDirPath(dir.path);
+        debugPrint('[NuevoRegistro] Carpeta temporal creada: ${dir.path}');
         goToFoto();
       },
     );
   }
   // TODO: crear carpeta temporal con str_fecha y navegar a Tomar foto.
-  // TODO: Crear un SnackBar personalizado de tickea (mensajito temporal)
   // TODO: integrar navegación / creación de carpeta en pasos siguientes.
 
   @override
@@ -322,7 +332,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                         setState(() {
                           _diaSeleccionado = diaSeleccionado;
                           _diaInicio = diaInicio;
-                          strFecha = _formatoFecha(diaSeleccionado);
+                          strFecha = fmtFecha(diaSeleccionado);
                         });
                       },
                       onPageChanged: (diaInicio) => _diaInicio = diaInicio,

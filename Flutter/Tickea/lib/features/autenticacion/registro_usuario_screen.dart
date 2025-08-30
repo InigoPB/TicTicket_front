@@ -49,11 +49,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             titulo: '⚠️ ¡¡Cuidado!!',
             contenido: 'Rellena todos los campos obligatorios',
             textoSi: 'Reintentar',
-            onSi: () {
+            onSi: () async {
               Navigator.of(context).pop();
             },
             textoNo: 'Inicio',
-            onNo: () {
+            onNo: () async {
               context.go('/login');
             },
           );

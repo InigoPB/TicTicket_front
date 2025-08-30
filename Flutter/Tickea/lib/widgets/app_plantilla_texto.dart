@@ -4,15 +4,16 @@ import 'package:tickea/core/theme/app_styles.dart';
 class AppTexto {
   static Widget titulo(
     String texto, {
-    TextAlign align = TextAlign.start,
-    int maxLines = 1,
-    TextOverflow overflow = TextOverflow.ellipsis,
+    TextAlign align = TextAlign.center,
+    int maxLines = 2,
+    bool ellipsisAlFinal = false,
   }) {
     return Text(
       texto,
       textAlign: align,
       maxLines: maxLines,
-      overflow: overflow,
+      softWrap: true, // asegura que haga salto de línea
+      overflow: ellipsisAlFinal ? TextOverflow.ellipsis : TextOverflow.clip,
       style: AppEstiloTexto.titulo,
     );
   }

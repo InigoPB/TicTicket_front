@@ -18,6 +18,7 @@ class AppBotonPrimario extends StatelessWidget {
     required this.tamAlto,
     required this.texto,
     required this.onPressed,
+    bool autoFocus = false,
   });
 
   @override

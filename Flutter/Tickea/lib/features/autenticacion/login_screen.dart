@@ -42,11 +42,11 @@ class _LoginScreenState extends State<LoginScreen> {
             titulo: '💥 Ups!',
             contenido: 'Error al iniciar sesión: ${e.message}',
             textoSi: 'Registrarse',
-            onSi: () {
+            onSi: () async {
               context.go('/register');
             },
             textoNo: 'Volver',
-            onNo: () {
+            onNo: () async {
               Navigator.of(context).pop();
             },
           );

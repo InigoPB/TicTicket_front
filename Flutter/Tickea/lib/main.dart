@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-import 'app.dart'; // Aqui usamos go_router y montamos la app
+import 'app.dart';
+import 'features/registro/registro_provider.dart'; // Aqui usamos go_router y montamos la app
 
 //Vamos a usar app.dart solo para iniciar la aplicación a partir de aqi se irá, "repartiendo" las diferentes acciones.
 void main() async {
@@ -12,5 +14,10 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown, // opcional (volteado vertical)
   ]);
-  runApp(const TickeaApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => RegistroProvider(),
+      child: const TickeaApp(),
+    ),
+  );
 }

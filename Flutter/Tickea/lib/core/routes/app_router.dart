@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tickea/features/nuevo_registro/nuevo_registro_screen.dart';
+import 'package:tickea/features/autenticacion/login_screen.dart';
+import 'package:tickea/features/autenticacion/registro_usuario_screen.dart';
+import 'package:tickea/features/nuevo_registro/calendario_screen.dart';
 import 'package:tickea/features/historico/historico_screen.dart';
-import 'package:tickea/features/login/login_screen.dart';
+import 'package:tickea/features/nuevo_registro/nueva_foto.dart';
 import 'package:tickea/features/principal/principal_screen.dart';
-import 'package:tickea/features/register/register_screen.dart';
 import 'package:tickea/features/splash/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -44,6 +45,13 @@ final GoRouter appRouter = GoRouter(
       path: '/historico',
       builder: (BuildContext context, GoRouterState state) {
         return const HistoricoScreen();
+      },
+    ),
+    GoRoute(
+      path: '/nuevaFoto',
+      name: 'nuevaFoto',
+      builder: (BuildContext context, GoRouterState state) {
+        return const NuevaFoto();
       },
     ),
   ],
