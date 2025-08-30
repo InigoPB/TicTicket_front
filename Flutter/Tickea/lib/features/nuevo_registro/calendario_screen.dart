@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tickea/core/formateadores/fecha_formato.dart';
 import 'package:tickea/core/theme/app_styles.dart';
+import 'package:tickea/mocks/registro/registros_mock.dart';
 import 'package:tickea/widgets/app_popups.dart';
 import 'package:tickea/widgets/app_componentes.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -28,11 +29,11 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
   DateTime _diaInicio = DateTime.now();
   DateTime? _diaSeleccionado;
   String? strFecha;
-  final String strNombrePantalla =
-      'Nuevo Registro'; // Tamaño del calendario.es un Mok aquí ira lo que nos de el backend | Set es un tipo de lista
+  late final Set<DateTime> _diasRegistrados;
+  final bool Function(DateTime) _contieneDia =
+      DiasRegistradosMock.contiene; //esto lo cambiaremos por el dato real cuando toque.
 
   //Funciones.
-  final Set<DateTime> _diasRegistrados = {DateTime(2025, 8, 10), DateTime(2025, 8, 11)};
 
   bool _isMismoDia(DateTime fechaHoy, DateTime fechaSeleccionada) =>
       fechaHoy.day == fechaSeleccionada.day &&
@@ -40,24 +41,24 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
       fechaHoy.month == fechaSeleccionada.month;
 
 //Booleano para saber si un dia es mayor o menor
-  bool _isDiaMayor(DateTime fechaHoy, DateTime otraFecha) =>
-      DateTime(fechaHoy.year, fechaHoy.month, fechaHoy.day).isBefore(
-        DateTime(otraFecha.year, otraFecha.month, otraFecha.day),
+  bool _isDiaMayor(DateTime fechaHoy, DateTime otraFecha) => formatoDia(fechaHoy).isBefore(
+        formatoDia(otraFecha),
       );
 
-  bool _isDiaRegistrado(DateTime dia) => _diasRegistrados.any(
-        (d) => _isMismoDia(d, dia),
-      );
+  ///TODO: Cambiar el Mock a dato real cuando tenga que ser.
+  bool _isDiaRegistrado(DateTime dia) => _contieneDia(formatoDia(dia));
 
   void _hoyBtn() {
     final DateTime hoy = DateTime.now();
-    final DateTime soloFecha = DateTime(hoy.year, hoy.month, hoy.day);
+    final DateTime soloFecha = formatoDia(hoy);
     context.read<RegistroProvider>().setFecha(soloFecha);
     setState(() {
       _diaInicio = soloFecha;
       _diaSeleccionado = soloFecha;
       strFecha = fmtFecha(soloFecha);
     });
+    debugPrint('[NuevoRegistro] Hoy seleccionado: $strFecha');
+    goToFoto();
   }
 
   void goToFoto() {
@@ -91,9 +92,9 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
     // 3) Confirmación si la fecha es distinta de hoy
 
     final now = DateTime.now();
-    final hoy = DateTime(now.year, now.month, now.day);
+    final hoy = formatoDia(now);
 
-    final sel = DateTime(seleccion.year, seleccion.month, seleccion.day);
+    final sel = formatoDia(seleccion);
     final esMismoDia = _isMismoDia(hoy, sel);
 
     final strFechaFmt = fmtFecha(sel);
