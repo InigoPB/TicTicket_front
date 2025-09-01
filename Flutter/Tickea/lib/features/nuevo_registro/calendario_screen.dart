@@ -12,6 +12,7 @@ import 'package:tickea/core/responsive/app_responsive.dart';
 import 'package:tickea/core/layouts/app_box_responsive.dart';
 import 'package:tickea/core/archivos/carpeta_temporal.dart';
 import 'package:tickea/features/registro/registro_provider.dart';
+import 'dart:developer' as dev;
 
 ///TODO: Contemplar el tema de vacaciones. Que va a pasar cuando esta persona esté de vacaciones?
 
@@ -29,9 +30,8 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
   DateTime _diaInicio = DateTime.now();
   DateTime? _diaSeleccionado;
   String? strFecha;
-  late final Set<DateTime> _diasRegistrados;
-  final bool Function(DateTime) _contieneDia =
-      DiasRegistradosMock.contiene; //esto lo cambiaremos por el dato real cuando toque.
+  //esto de abajo lo cambiaremos por el dato real cuando toque.
+  final bool Function(DateTime) _contieneDia = DiasRegistradosMock.contiene;
 
   //Funciones.
 
@@ -57,16 +57,18 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
       _diaSeleccionado = soloFecha;
       strFecha = fmtFecha(soloFecha);
     });
-    debugPrint('[NuevoRegistro] Hoy seleccionado: $strFecha');
-    goToFoto();
+    dev.log('Botón Hoy pulsado | fecha=$strFecha', name: 'NR.Calendario', level: 500);
   }
 
   void goToFoto() {
+    dev.log('Navegación a /nuevaFoto', name: 'NR.Nav', level: 500);
     context.go('/nuevaFoto');
   }
 
   void _onAceptar() {
     final DateTime? seleccion = _diaSeleccionado;
+    dev.log('Click Aceptar | seleccion=${_diaSeleccionado != null}', name: 'NR.Flujo', level: 500);
+
     // 1) Fecha no seleccionada
     if (seleccion == null) {
       AppPopup.alerta(
@@ -80,6 +82,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
 
     // 2) Día ya registrado (mock)
     if (_isDiaRegistrado(seleccion)) {
+      dev.log('Bloqueado: día ya registrado | fecha=${fmtFecha(formatoDia(seleccion))}', name: 'NR.Flujo', level: 900);
       AppPopup.alerta(
         context: context,
         titulo: 'Día ya registrado',
@@ -93,15 +96,13 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
 
     final now = DateTime.now();
     final hoy = formatoDia(now);
-
     final sel = formatoDia(seleccion);
     final esMismoDia = _isMismoDia(hoy, sel);
-
     final strFechaFmt = fmtFecha(sel);
     final strDiaSemana = DateFormat.EEEE('es').format(sel);
-// Actualiza el estado con mismo valor
 
     if (!esMismoDia) {
+      dev.log('Confirmado día no-hoy | fecha=$strFechaFmt', name: 'NR.Flujo', level: 500);
       AppPopup.confirmacion(
         context: context,
         alerta: false,
@@ -113,7 +114,6 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
           setState(() => strFecha = strFechaFmt);
           context.read<RegistroProvider>().setFecha(sel);
           final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
-          debugPrint('[NuevoRegistro] Temp dir: ${dir.path}');
           if (!mounted) return;
           context.read<RegistroProvider>().setTempDirPath(dir.path);
           goToFoto();
@@ -137,7 +137,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
         final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
         if (!mounted) return;
         context.read<RegistroProvider>().setTempDirPath(dir.path);
-        debugPrint('[NuevoRegistro] Carpeta temporal creada: ${dir.path}');
+        dev.log('Carpeta temporal creada (ok) | carpeta=$strFechaFmt', name: 'NR.Storage', level: 500);
         goToFoto();
       },
     );
@@ -336,6 +336,8 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                           _diaInicio = diaInicio;
                           strFecha = fmtFecha(diaSeleccionado);
                         });
+                        //Logs para los debugs
+                        dev.log('Día seleccionado | fecha=$strFecha', name: 'NR.Calendario', level: 500);
                       },
                       onPageChanged: (diaInicio) => _diaInicio = diaInicio,
                     );
