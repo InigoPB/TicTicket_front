@@ -100,7 +100,6 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
     final strFechaFmt = fmtFecha(sel);
     final strDiaSemana = DateFormat.EEEE('es').format(sel);
 // Actualiza el estado con mismo valor
-    setState(() => strFecha = strFechaFmt);
 
     if (!esMismoDia) {
       AppPopup.confirmacion(
@@ -111,10 +110,11 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
         textoSi: 'Sí, continuar',
         textoNo: 'No, cambiar',
         onSi: () async {
+          setState(() => strFecha = strFechaFmt);
           context.read<RegistroProvider>().setFecha(sel);
           final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
           debugPrint('[NuevoRegistro] Temp dir: ${dir.path}');
-          if (!mounted) return; //mounted
+          if (!mounted) return;
           context.read<RegistroProvider>().setTempDirPath(dir.path);
           goToFoto();
         },
@@ -132,6 +132,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
       contenido: '$strDiaSemana $strFechaFmt.',
       textoOk: 'Continuar',
       onOk: () async {
+        setState(() => strFecha = strFechaFmt);
         context.read<RegistroProvider>().setFecha(sel);
         final dir = await obtenerOCrearCarpetaTemporal(strFechaFmt);
         if (!mounted) return;
