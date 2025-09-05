@@ -335,3 +335,22 @@ class AppCabecero extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+class AppChipCamara extends StatelessWidget {
+  const AppChipCamara({
+    super.key,
+    required this.totalFotos,
+  });
+
+  final int totalFotos;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      backgroundColor: AppColores.primariOscuro,
+      side: BorderSide(
+          color: totalFotos == 0 ? AppColores.secundariOscuro.withOpacity(.5) : AppColores.acierto, width: 1),
+      label: Text('$totalFotos', style: TextStyle(color: totalFotos == 0 ? AppColores.grisClaro : AppColores.fondo)),
+    );
+  }
+}

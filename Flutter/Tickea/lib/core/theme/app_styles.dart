@@ -10,8 +10,8 @@ class AppColores {
   static const Color primario = Color(0xFF1B5D60); // Color principal
   static const Color secundario = Color(0xFFA8547A); // Detalles y selecciones
   static const Color secundariOscuro = Color(0xFF7A3958); // versión oscura del secundario (calculado)
-  static const Color error = Color(0xFFBE1722); // Para los errores
-  static const Color acierto = Color(0xFF1C8139); // Para Aciertos
+  static const Color error = Color(0xFF762B30); // Para los errores
+  static const Color acierto = Color(0xFF305237); // Para Aciertos
 }
 
 //2. Tamaños
