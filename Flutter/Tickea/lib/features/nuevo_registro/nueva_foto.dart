@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:tickea/core/ocr/captura_proveedor.dart';
@@ -160,6 +161,13 @@ class _NuevaFotoState extends State<NuevaFoto> {
     setState(() {}); // refresca
   }
 
+  Future<void> _reintentarCamara() async {
+    _error = null;
+    _inicializada = false;
+    setState(() {});
+    await _inicializarCamara();
+  }
+
   //usamos el dispose para liberar recursos
   @override
   void dispose() {
@@ -180,8 +188,18 @@ class _NuevaFotoState extends State<NuevaFoto> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _ErrorView(mensaje: _error!),
-                const SizedBox(height: 12),
-                botonFlotante(onPressed: _reintentarPermisos, texto: 'Reintentar permisos', esAcierto: false),
+                const SizedBox(height: AppTamanios.md),
+                botonFlotante(
+                  onPressed: _reintentarPermisos,
+                  texto: 'Reintentar permisos',
+                  esAcierto: false,
+                ),
+                const SizedBox(height: AppTamanios.sm),
+                botonFlotante(
+                  onPressed: _reintentarCamara,
+                  texto: 'Reintentar cámara',
+                  esAcierto: true,
+                ),
               ], // mostramos error
             )
           : (!_inicializada //si no hay error y no está inicializada
@@ -204,7 +222,14 @@ class _NuevaFotoState extends State<NuevaFoto> {
               : Stack(
                   fit: StackFit.expand,
                   children: [
-                    if (_camara != null) CameraPreview(_camara!),
+                    if (_camara != null)
+                      Center(
+                        child: AspectRatio(
+                          //esto es para que no se deforme la imagen
+                          aspectRatio: _camara!.value.aspectRatio,
+                          child: CameraPreview(_camara!),
+                        ),
+                      ),
                     Positioned(
                       top: AppTamanios.md,
                       right: AppTamanios.md,
