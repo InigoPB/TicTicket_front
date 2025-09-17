@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:tickea/core/ocr/captura_proveedor.dart';
+import 'package:tickea/mocks/captura_proveedor.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 import 'package:tickea/widgets/app_componentes.dart';
 import 'package:tickea/widgets/app_popups.dart';
@@ -225,9 +225,16 @@ class _NuevaFotoState extends State<NuevaFoto> {
                     if (_camara != null)
                       Center(
                         child: AspectRatio(
-                          //esto es para que no se deforme la imagen
-                          aspectRatio: _camara!.value.aspectRatio,
-                          child: CameraPreview(_camara!),
+                          aspectRatio: MediaQuery.of(context).size.width / MediaQuery.of(context).size.height,
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width: _camara!.value.previewSize!.height,
+                              height: _camara!.value.previewSize!
+                                  .width, // Truco, para engañar a la camara de que estams en portrait
+                              child: CameraPreview(_camara!),
+                            ),
+                          ),
                         ),
                       ),
                     Positioned(
