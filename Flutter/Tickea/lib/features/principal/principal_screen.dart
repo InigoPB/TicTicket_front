@@ -19,7 +19,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColores.fondo,
-      appBar: AppBar(title: const Text('Tickea Login')),
+      appBar: const AppCabecero(),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

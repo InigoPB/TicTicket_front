@@ -203,7 +203,7 @@ class AppPopup {
     required String contenido,
     String textoSi = 'Sí',
     String textoNo = 'No',
-    required Future<void> Function()? onSi,
+    Future<void> Function()? onSi,
     Future<void> Function()? onNo,
     bool barrierDismissible = false,
     bool alerta = true,

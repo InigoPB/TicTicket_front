@@ -23,6 +23,8 @@ class AppTamanios {
   static const double md = base * 2; // 16.0
   static const double lg = base * 3; // 24.0
   static const double xl = base * 4; // 32.0
+  static const double xxl = base * 5; // 40.0
+  static const double xxxl = base * 6; // 48.0
 }
 
 // 3. Fuentes

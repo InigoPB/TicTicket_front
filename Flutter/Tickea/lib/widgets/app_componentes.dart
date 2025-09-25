@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tickea/core/responsive/app_responsive.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 
 // Botón Primario
@@ -157,6 +156,7 @@ class AppCampoTexto extends StatefulWidget {
   final double tamAncho;
   final String titulo;
   final TextEditingController controlador;
+  final TextInputType keyboardType;
   final bool modoClave;
 
   const AppCampoTexto({
@@ -165,6 +165,7 @@ class AppCampoTexto extends StatefulWidget {
     required this.titulo,
     required this.controlador,
     this.modoClave = false,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -174,6 +175,7 @@ class AppCampoTexto extends StatefulWidget {
 class _AppCampoTextoState extends State<AppCampoTexto> {
   late FocusNode _focusNode;
   bool estaActivo = false;
+  TextInputType get keyboardType => widget.keyboardType;
 
   @override
   void initState() {
@@ -225,6 +227,7 @@ class _AppCampoTextoState extends State<AppCampoTexto> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             alignment: Alignment.centerLeft,
             child: TextField(
+              keyboardType: keyboardType,
               focusNode: _focusNode,
               controller: widget.controlador,
               style: AppEstiloTexto.cuerpo,
@@ -257,6 +260,7 @@ class AppCabecero extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor = AppColores.fondo,
     this.alturaBase = 64.0,
     this.logoAsset = 'assets/img/logo_bar.png',
+    this.ruta = '/principal',
   });
 
   final bool mostrarAtras;
@@ -264,6 +268,7 @@ class AppCabecero extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final double alturaBase;
   final String logoAsset;
+  final String ruta;
 
   @override
   Size get preferredSize => Size.fromHeight(alturaBase);
@@ -309,7 +314,7 @@ class AppCabecero extends StatelessWidget implements PreferredSizeWidget {
                       if (context.canPop()) {
                         context.pop();
                       } else {
-                        context.go('/principal');
+                        context.go(ruta);
                       }
                     },
               )

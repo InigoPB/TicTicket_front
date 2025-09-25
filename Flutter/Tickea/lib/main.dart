@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'features/registro/registro_provider.dart'; // Aqui usamos go_router y montamos la app
 import 'package:provider/provider.dart';
-import 'package:tickea/core/ocr/captura_proveedor.dart';
+import 'package:tickea/mocks/captura_proveedor.dart';
 
 //Vamos a usar app.dart solo para iniciar la aplicación a partir de aqi se irá, "repartiendo" las diferentes acciones.
 void main() async {

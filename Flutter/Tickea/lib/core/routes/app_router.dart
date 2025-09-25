@@ -4,12 +4,12 @@ import 'package:tickea/features/autenticacion/login_screen.dart';
 import 'package:tickea/features/autenticacion/registro_usuario_screen.dart';
 import 'package:tickea/features/nuevo_registro/calendario_screen.dart';
 import 'package:tickea/features/historico/historico_screen.dart';
-import 'package:tickea/features/nuevo_registro/nueva_foto.dart';
+import 'package:tickea/features/nuevo_registro/nueva_foto/nueva_foto.dart';
 import 'package:tickea/features/principal/principal_screen.dart';
 import 'package:tickea/features/splash/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/nuevoRegistro',
+  initialLocation: '/splash',
   routes: [
     GoRoute(
       path: '/splash',

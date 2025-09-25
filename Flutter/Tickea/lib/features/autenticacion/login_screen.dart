@@ -67,7 +67,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tickea Login')),
+      appBar: const AppCabecero(
+        mostrarAtras: false,
+      ),
       backgroundColor: AppColores.fondo,
       body: Padding(
         padding: const EdgeInsets.all(20),

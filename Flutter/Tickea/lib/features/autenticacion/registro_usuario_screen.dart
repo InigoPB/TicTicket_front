@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tickea/core/theme/app_styles.dart';
+import 'package:tickea/widgets/app_componentes.dart';
 import 'package:tickea/widgets/app_popups.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -135,44 +137,85 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Registro TICKea')),
+      backgroundColor: AppColores.fondo,
+      appBar: const AppCabecero(
+        ruta: '/login',
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            TextField(
+            /*TextField(
               controller: userCtrl,
               decoration: const InputDecoration(labelText: 'Usuario *'),
+            ),*/
+            AppCampoTexto(
+              tamAncho: double.infinity,
+              titulo: 'Usuario *',
+              controlador: userCtrl,
             ),
-            TextField(
+            AppCampoTexto(
+              tamAncho: double.infinity,
+              titulo: 'Telefono',
+              controlador: phoneCtrl,
+              keyboardType: TextInputType.phone,
+            ),
+            /*TextField(
               keyboardType: TextInputType.phone,
               controller: phoneCtrl,
               decoration: const InputDecoration(labelText: 'Telefono'),
+            ),*/
+            AppCampoTexto(
+              tamAncho: double.infinity,
+              titulo: 'Email *',
+              controlador: emailCtrl,
+              keyboardType: TextInputType.emailAddress,
             ),
-            TextField(
+            /*TextField(
               controller: emailCtrl,
               decoration: const InputDecoration(labelText: 'Email *'),
+            ),*/
+            AppCampoTexto(
+              tamAncho: double.infinity,
+              titulo: 'Contraseña *',
+              controlador: passwordCtrl,
+              modoClave: true,
             ),
-            TextField(
+            /*TextField(
               controller: passwordCtrl,
               decoration: const InputDecoration(labelText: 'Contraseña *'),
               obscureText: true,
+            ),*/
+            AppCampoTexto(
+              tamAncho: double.infinity,
+              titulo: 'Repite Contraseña *',
+              controlador: repasswordCtrl,
+              modoClave: true,
             ),
-            TextField(
+            /*TextField(
               controller: repasswordCtrl,
               decoration: const InputDecoration(labelText: 'Repite Contraseña *'),
               obscureText: true,
+            ),*/
+            const SizedBox(height: AppTamanios.xxxl),
+            AppBotonPrimario(
+              texto: 'Aceptar',
+              onPressed: register,
+              tamAncho: double.infinity,
+              tamAlto: AppTamanios.xxxl,
             ),
-            const SizedBox(height: 24),
-            ElevatedButton(onPressed: register, child: const Text('Aceptar')),
+            /*ElevatedButton(onPressed: register, child: const Text('Aceptar')),*/
+            const SizedBox(height: AppTamanios.md),
             TextButton(
-              onPressed: () {
-                context.go('/login');
-              },
-              child: const Text('¿Ya tienes cuenta? Inicia sesión'),
-            ),
+                onPressed: () {
+                  context.go('/login');
+                },
+                child: AppTexto.textoNotaM('¿Ya tienes cuenta? Inicia sesión')
+                //const Text('¿Ya tienes cuenta? Inicia sesión'),
+                ),
             const SizedBox(height: 16),
-            Text(mensaje, style: const TextStyle(color: Colors.red)),
+            AppTexto.textoError(mensaje),
+            //Text(mensaje, style: const TextStyle(color: Colors.red)),
           ],
         ),
       ),
