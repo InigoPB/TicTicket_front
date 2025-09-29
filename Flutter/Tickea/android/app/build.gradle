@@ -9,7 +9,7 @@ plugins {
 android {
     namespace = "com.example.tik_ticket"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "26.1.10909125"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

@@ -46,9 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
               context.go('/register');
             },
             textoNo: 'Volver',
-            onNo: () async {
-              Navigator.of(context).pop();
-            },
           );
         },
       );

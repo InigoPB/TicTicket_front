@@ -19,7 +19,9 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColores.fondo,
-      appBar: const AppCabecero(),
+      appBar: const AppCabecero(
+        ruta: '/login',
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
