@@ -7,6 +7,9 @@ import 'package:tickea/core/formateadores/fecha_formato.dart';
  */
 
 class RegistroProvider extends ChangeNotifier {
+  String uidUser = 'uEvA26nZ9IRxPf7m2wDkV0CgtSi1';
+  String get getUidUser => uidUser;
+
   String _strFecha = '';
   String get strFecha => _strFecha;
 
@@ -23,6 +26,12 @@ class RegistroProvider extends ChangeNotifier {
   void setTempDirPath(String path) {
     if (_tempDirPath == path) return;
     _tempDirPath = path;
+    notifyListeners();
+  }
+
+  void setUidUser(String uid) {
+    if (uidUser == uid) return;
+    uidUser = uid;
     notifyListeners();
   }
 

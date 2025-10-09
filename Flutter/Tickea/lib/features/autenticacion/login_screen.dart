@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 import 'package:tickea/widgets/app_popups.dart';
-import '../../widgets/app_componentes.dart';
+import 'package:tickea/widgets/app_componentes.dart';
+import '../registro/registro_provider.dart';
+import 'package:tickea/features/registro/registro_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,7 +18,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailCtrl = TextEditingController();
   final passwordCtrl = TextEditingController();
+  final uidCtrl = TextEditingController();
   String mensaje = '';
+  String uidUser = '';
 
   Future<void> login() async {
     try {
@@ -23,20 +28,19 @@ class _LoginScreenState extends State<LoginScreen> {
         email: emailCtrl.text.trim(),
         password: passwordCtrl.text.trim(),
       );
+      if (FirebaseAuth.instance.currentUser != null) {
+        uidUser = FirebaseAuth.instance.currentUser!.uid;
+      }
+      if (mounted) {
+        Provider.of<RegistroProvider>(context, listen: false).setUidUser(uidUser);
+      }
 
+      ///TODO: meter un spinner de carga para la espera
+      const CircularProgressIndicator();
       goToPrincipal();
     } on FirebaseAuthException catch (e) {
       setState(
         () {
-          /*AppPopup.popupDosBotones(
-              context: context,
-              contenido: 'Error al iniciar sesión: ${e.message}',
-              exito: false,
-              goBotonA: '/register',
-              goBotonB: '/login',
-              textoIr: "Registrarse",
-              textoVolver: "Volver",
-              titulo: '💥');*/
           AppPopup.confirmacion(
             context: context,
             titulo: '💥 Ups!',
@@ -90,6 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
               tamAncho: 240,
               tamAlto: 48,
               texto: 'Inicio',
+
+              ///TODO: meter un spinner de carga para la espera
               onPressed: login,
             ),
             const SizedBox(height: 24),

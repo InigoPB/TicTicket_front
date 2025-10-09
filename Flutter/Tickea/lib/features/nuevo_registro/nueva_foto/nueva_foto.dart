@@ -154,7 +154,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
       await ocrProv.capturarYOcr(camara);
       if (!mounted) return;
       debugPrint('[NuevaFoto] Foto capturada y procesada por OCR');
-      log('Texto OCR acumulado:\n${ocrProv.ocrPorFilas}');
+      log('Texto OCR acumulado:\n${ocrProv.ocrPorFilas}\n\n[Texto Bruto:\n${ocrProv.ocrBruto}]');
       await _postCapturaPopup(ocrProv, regProv);
     } catch (e) {
       debugPrint('Error capturarYOcr: $e');
@@ -229,18 +229,17 @@ class _NuevaFotoState extends State<NuevaFoto> {
           debugPrint('[NuevaFoto] Usuario continúa para sacar otra foto');
         },
         onNo: () async {
-          await _enviarResultadosSpring(ocrProv, regProv); // ✅ pasamos provs
+          await _enviarResultadosSpring(ocrProv, regProv); //pasamos provs
           if (!mounted) return;
         });
   }
 
   Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
-    final uri = Uri.parse('http://10.0.2.2:8080/api/ocr'); // endpoint de Spring Boot
+    final uri = Uri.parse('http://localhost:8080/tickea/tickets');
     final payload = <String, dynamic>{
       'fecha': regProv.strFecha,
-      'fotos': ocrProv.fotosProcesadas,
       'textoFilas': ocrProv.ocrPorFilas,
-      'textoBruto': ocrProv.ocrBruto,
+      'uidUsuario': regProv.uidUser,
     };
 
     debugPrint('[NuevaFoto] Enviando a Spring: $payload');
@@ -262,8 +261,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
           alerta: false,
           onOk: () async {},
         );
-        //Reseteamos sesion para nuevo registro
-        // context.read<OcrProvider>().resetSesion();
+        if (!mounted) return;
       } else {
         if (!mounted) return;
         await AppPopup.alerta(
@@ -442,8 +440,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
                               ),
                             ),
                           ),
-
-                          /// Derecha: botón "Borrar última"
+                          // Derecha: botón "Borrar última"
                           Positioned(
                             bottom: AppTamanios.md,
                             right: AppTamanios.md,
@@ -575,7 +572,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
                       ),
                       const SizedBox(height: AppTamanios.sm),
 
-                      /// Selector de modo de visualización (Bruto/Filas/Marcado/Compacto).
+                      // Selector de modo de visualización (Bruto/Filas/Marcado/Compacto).
                       /* Wrap(
                         spacing: AppTamanios.sm,
                         runSpacing: AppTamanios.sm,
