@@ -234,10 +234,25 @@ class _NuevaFotoState extends State<NuevaFoto> {
         });
   }
 
+  String _fechaFormatoBack(String fecha) {
+    //Convierte "dd_MM_yyyy" a "yyyy-MM-dd"
+    try {
+      final partes = fecha.split('_');
+      if (partes.length != 3) return fecha; // Formato inesperado, devolver original
+      final dia = partes[0];
+      final mes = partes[1];
+      final anio = partes[2];
+      return '$anio-$mes-$dia';
+    } catch (e) {
+      debugPrint('Error al convertir fecha para Spring: $e');
+      return fecha; // En caso de error, devolver original
+    }
+  }
+
   Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
-    final uri = Uri.parse('http://localhost:8080/tickea/tickets');
+    final uri = Uri.parse('http://192.168.137.1:8080/tickea/tickets');
     final payload = <String, dynamic>{
-      'fecha': regProv.strFecha,
+      'fecha': _fechaFormatoBack(regProv.strFecha),
       'textoFilas': ocrProv.ocrPorFilas,
       'uidUsuario': regProv.uidUser,
     };

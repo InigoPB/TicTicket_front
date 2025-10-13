@@ -48,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               textoVolver: 'Login')*/
           AppPopup.confirmacion(
             context: context,
-            titulo: '⚠️ ¡¡Cuidado!!',
+            titulo: '¡¡Cuidado!!',
             contenido: 'Rellena todos los campos obligatorios',
             textoSi: 'Reintentar',
             onSi: () async {
@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //Validación de contraseñas que no coinciden
       if (passwordCtrl.text != repasswordCtrl.text) {
         setState(() {
-          mensaje = '❌ Las contraseñas no coinciden';
+          mensaje = 'Las contraseñas no coinciden';
         });
         return;
       }
@@ -88,37 +88,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'fechaRegistro': Timestamp.now(),
       };
 
-      //Guardamos el documento en Firestore con el UID como ID
+      //Guardamos el documento en Firestore
       await FirebaseFirestore.instance.collection('users').doc(uid).set(userData);
 
-      // 🧹 Limpiamos los campos del formulario
+      //Limpiamos los campos del formulario
       clearFields();
 
-      // 🎉 Mensaje de éxito
+      //Mensaje de éxito
       setState(() {
-        mensaje = '🎉 Usuario creado con éxito';
+        mensaje = 'Usuario creado con éxito';
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         setState(() {
-          mensaje = '⚠️ Este correo ya está registrado';
+          mensaje = 'Este correo ya está registrado';
         });
       } else if (e.code == 'invalid-email') {
         setState(() {
-          mensaje = '❗ Formato de email inválido';
+          mensaje = 'Formato de email inválido';
         });
       } else if (e.code == 'weak-password') {
         setState(() {
-          mensaje = '🔒 La contraseña es demasiado débil. Necesitas al menos 6 caracteres';
+          mensaje = 'La contraseña es demasiado débil. Necesitas al menos 6 caracteres';
         });
       } else {
         setState(() {
-          mensaje = '❌ Error al registrarse: ${e.message}';
+          mensaje = 'Error al registrarse: ${e.message}';
         });
       }
     } catch (e) {
       setState(() {
-        mensaje = '💥 Error inesperado: ${e.toString()}';
+        mensaje = 'Error inesperado: ${e.toString()}';
       });
     }
   }
@@ -136,88 +136,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColores.fondo,
       appBar: const AppCabecero(
         ruta: '/login',
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            /*TextField(
-              controller: userCtrl,
-              decoration: const InputDecoration(labelText: 'Usuario *'),
-            ),*/
-            AppCampoTexto(
-              tamAncho: double.infinity,
-              titulo: 'Usuario *',
-              controlador: userCtrl,
-            ),
-            AppCampoTexto(
-              tamAncho: double.infinity,
-              titulo: 'Telefono',
-              controlador: phoneCtrl,
-              keyboardType: TextInputType.phone,
-            ),
-            /*TextField(
-              keyboardType: TextInputType.phone,
-              controller: phoneCtrl,
-              decoration: const InputDecoration(labelText: 'Telefono'),
-            ),*/
-            AppCampoTexto(
-              tamAncho: double.infinity,
-              titulo: 'Email *',
-              controlador: emailCtrl,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            /*TextField(
-              controller: emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email *'),
-            ),*/
-            AppCampoTexto(
-              tamAncho: double.infinity,
-              titulo: 'Contraseña *',
-              controlador: passwordCtrl,
-              modoClave: true,
-            ),
-            /*TextField(
-              controller: passwordCtrl,
-              decoration: const InputDecoration(labelText: 'Contraseña *'),
-              obscureText: true,
-            ),*/
-            AppCampoTexto(
-              tamAncho: double.infinity,
-              titulo: 'Repite Contraseña *',
-              controlador: repasswordCtrl,
-              modoClave: true,
-            ),
-            /*TextField(
-              controller: repasswordCtrl,
-              decoration: const InputDecoration(labelText: 'Repite Contraseña *'),
-              obscureText: true,
-            ),*/
-            const SizedBox(height: AppTamanios.xxxl),
-            AppBotonPrimario(
-              texto: 'Aceptar',
-              onPressed: register,
-              tamAncho: double.infinity,
-              tamAlto: AppTamanios.xxxl,
-            ),
-            /*ElevatedButton(onPressed: register, child: const Text('Aceptar')),*/
-            const SizedBox(height: AppTamanios.md),
-            TextButton(
-                onPressed: () {
-                  context.go('/login');
-                },
-                child: AppTexto.textoNotaM('¿Ya tienes cuenta? Inicia sesión')
-                //const Text('¿Ya tienes cuenta? Inicia sesión'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, bottomInset + 20),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    AppCampoTexto(
+                      tamAncho: double.infinity,
+                      titulo: 'Usuario *',
+                      controlador: userCtrl,
+                    ),
+                    AppCampoTexto(
+                      tamAncho: double.infinity,
+                      titulo: 'Telefono',
+                      controlador: phoneCtrl,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    AppCampoTexto(
+                      tamAncho: double.infinity,
+                      titulo: 'Email *',
+                      controlador: emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    AppCampoTexto(
+                      tamAncho: double.infinity,
+                      titulo: 'Contraseña *',
+                      controlador: passwordCtrl,
+                      modoClave: true,
+                    ),
+                    AppCampoTexto(
+                      tamAncho: double.infinity,
+                      titulo: 'Repite Contraseña *',
+                      controlador: repasswordCtrl,
+                      modoClave: true,
+                    ),
+                    const SizedBox(height: AppTamanios.xxxl),
+                    AppBotonPrimario(
+                      texto: 'Aceptar',
+                      onPressed: register,
+                      tamAncho: double.infinity,
+                      tamAlto: AppTamanios.xxxl,
+                    ),
+                    /*ElevatedButton(onPressed: register, child: const Text('Aceptar')),*/
+                    const SizedBox(height: AppTamanios.md),
+                    TextButton(
+                        onPressed: () {
+                          context.go('/login');
+                        },
+                        child: AppTexto.textoNotaM('¿Ya tienes cuenta? Inicia sesión')
+                        //const Text('¿Ya tienes cuenta? Inicia sesión'),
+                        ),
+                    const SizedBox(height: 16),
+                    AppTexto.textoError(mensaje),
+                    //Text(mensaje, style: const TextStyle(color: Colors.red)),
+                  ],
                 ),
-            const SizedBox(height: 16),
-            AppTexto.textoError(mensaje),
-            //Text(mensaje, style: const TextStyle(color: Colors.red)),
-          ],
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
