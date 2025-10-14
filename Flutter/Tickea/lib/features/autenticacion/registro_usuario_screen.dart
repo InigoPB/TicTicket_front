@@ -20,6 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final phoneCtrl = TextEditingController();
   final repasswordCtrl = TextEditingController();
   String mensaje = '';
+  bool isOk = false;
 
   void clearFields() {
     emailCtrl.clear();
@@ -37,15 +38,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //Validación de campos vacíos
       if (emailCtrl.text.isEmpty || passwordCtrl.text.isEmpty || repasswordCtrl.text.isEmpty || userCtrl.text.isEmpty) {
         setState(() {
-          /*AppPopup.popupDosBotones(
-              context: context,
-              titulo: ,
-              contenido: 'Rellena todos los campos obligatorios',
-              goBotonA: '/register',
-              goBotonB: '/login',
-              exito: false,
-              textoIr: 'Reintentar',
-              textoVolver: 'Login')*/
           AppPopup.confirmacion(
             context: context,
             titulo: '¡¡Cuidado!!',
@@ -96,7 +88,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       //Mensaje de éxito
       setState(() {
-        mensaje = 'Usuario creado con éxito';
+        AppPopup.confirmacion(
+          context: context,
+          titulo: '✔️ Éxito',
+          contenido: 'Usuario creado con éxito. Ya puedes iniciar sesión.',
+          textoSi: 'Ir a Login',
+          onSi: () async {
+            context.go('/login');
+          },
+        );
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

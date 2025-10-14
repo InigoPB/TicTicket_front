@@ -16,6 +16,13 @@ class RegistroProvider extends ChangeNotifier {
   String? _tempDirPath;
   String? get tempDirPath => _tempDirPath;
 
+  Set<DateTime> _diasRegistrados = <DateTime>{};
+  Set<DateTime> get diasRegistrados => _diasRegistrados;
+
+  bool contieneDiaRegistrado(DateTime dia) {
+    return _diasRegistrados.any((i) => i.year == dia.year && i.month == dia.month && i.day == dia.day);
+  }
+
   void setFecha(DateTime fecha) {
     final nueva = fmtFecha(fecha);
     if (nueva == _strFecha) return;
@@ -35,10 +42,16 @@ class RegistroProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setDiasRegistrados(Set<DateTime> dias) {
+    _diasRegistrados = dias;
+    notifyListeners();
+  }
+
   void clear() {
     if (_strFecha.isEmpty && _tempDirPath == null) return;
     _strFecha = '';
     _tempDirPath = null;
+    _diasRegistrados.clear();
     notifyListeners();
   }
 }
