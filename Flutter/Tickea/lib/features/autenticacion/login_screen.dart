@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         final prov = Provider.of<RegistroProvider>(context, listen: false);
         prov.setUidUser(uidUser);
-        final dias = await TickeaApi.(uidUser);
+        final dias = await TickeaApi.listarFechasRegistradas(uidUser);
         prov.setDiasRegistrados(dias);
       }
 

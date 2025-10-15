@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:tickea/core/api/tickea_api.dart';
 import 'package:tickea/core/ocr/ocr_servicio.dart';
 import 'package:tickea/features/nuevo_registro/nueva_foto/ocr_provider.dart';
 import 'package:tickea/features/registro/registro_provider.dart';
@@ -295,6 +296,12 @@ class _NuevaFotoState extends State<NuevaFoto> {
         contenido: 'No se pudo conectar con el backend.\n$e',
         textoOk: 'Cerrar',
       );
+    }
+    if (mounted) {
+      final prov = Provider.of<RegistroProvider>(context, listen: false);
+      final uidUser = prov.getUidUser;
+      final dias = await TickeaApi.listarFechasRegistradas(uidUser);
+      prov.setDiasRegistrados(dias);
     }
   }
 

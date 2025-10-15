@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tickea/core/formateadores/fecha_formato.dart';
 import 'package:tickea/core/theme/app_styles.dart';
-import 'package:tickea/mocks/registro/registros_mock.dart';
+//import 'package:tickea/mocks/registro/registros_mock.dart';
 import 'package:tickea/widgets/app_popups.dart';
 import 'package:tickea/widgets/app_componentes.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -24,15 +24,12 @@ class NuevoRegistroScreen extends StatefulWidget {
 }
 
 class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTickerProviderStateMixin {
-  //Variables
+  late bool Function(DateTime) _contieneDia;
   late AnimationController _controller;
   final DateTime _diaHoy = DateTime.now();
   DateTime _diaInicio = DateTime.now();
   DateTime? _diaSeleccionado;
   String? strFecha;
-  //esto de abajo lo cambiaremos por el dato real cuando toque.
-  final bool Function(DateTime) _contieneDia = DiasRegistradosMock.contiene;
-
   //Funciones.
 
   bool _isMismoDia(DateTime fechaHoy, DateTime fechaSeleccionada) =>
@@ -142,13 +139,13 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
       },
     );
   }
-  // TODO: crear carpeta temporal con str_fecha y navegar a Tomar foto.
-  // TODO: integrar navegación / creación de carpeta en pasos siguientes.
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
+    final prov = context.read<RegistroProvider>();
+    _contieneDia = prov.contieneDiaRegistrado;
   }
 
   @override
@@ -242,10 +239,10 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                                   '${dia.day}',
                                   style: AppEstiloTexto.cuerpo.copyWith(
                                     fontSize:
-                                        _isDiaMayor(_diaHoy, dia) ? AppTamanios.base * 2.5 : AppTamanios.base * 2.0,
-                                    color: isDiaRegistrado ? AppColores.secundariOscuro : AppColores.primario,
+                                        _isDiaMayor(_diaHoy, dia) ? AppTamanios.base * 1.5 : AppTamanios.base * 2.0,
+                                    color: isDiaRegistrado ? AppColores.grisClaro : AppColores.primario,
                                     shadows: AppExtraBold.extraBold(
-                                        AppColores.primario, _isDiaMayor(_diaHoy, dia) ? .5 : 0.1),
+                                        AppColores.primario, _isDiaMayor(_diaHoy, dia) ? .1 : 0.3),
                                   ),
                                 ),
                               ),
@@ -292,6 +289,7 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                           );
                         },
                         todayBuilder: (context, dia, diaInicio) {
+                          bool isRegistrado = _isDiaRegistrado(dia);
                           return DecoratedBox(
                             decoration: BoxDecoration(
                               boxShadow: AppSombra.contenedores(
@@ -303,18 +301,29 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                                 direccion: BlurStyle.solid,
                               ),
                               color: AppColores.fondo,
-                              border: Border.all(width: 2, color: AppColores.secundariOscuro),
+                              border: Border.all(
+                                  width: 2, color: !isRegistrado ? AppColores.secundariOscuro : AppColores.grisClaro),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Center(
-                              child: Text(
-                                '${dia.day}',
-                                style: AppEstiloTexto.cuerpo.copyWith(
-                                  fontSize: AppTamanios.base * 2.5,
-                                  color: AppColores.secundariOscuro,
-                                  shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Text(
+                                    '${dia.day}',
+                                    style: AppEstiloTexto.cuerpo.copyWith(
+                                      fontSize: AppTamanios.base * 2.5,
+                                      color: AppColores.secundariOscuro,
+                                      shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                if (_isDiaRegistrado(dia))
+                                  Positioned.fill(
+                                    child: IgnorePointer(
+                                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.contain),
+                                    ),
+                                  ),
+                              ],
                             ),
                           );
                         },
@@ -331,12 +340,24 @@ class _NuevoRegistroScreenState extends State<NuevoRegistroScreen> with SingleTi
                           );
                           return;
                         }
+                        if (_isDiaMayor(_diaHoy, diaSeleccionado)) {
+                          AppPopup.alerta(
+                            context: context,
+                            titulo: 'Ojito Nostradamus',
+                            contenido: 'No puedes seleccionar un día en el futuro.',
+                            textoOk: 'Entendido',
+                            barrierDismissible: false,
+                            alerta: true, // borde rojo
+                          );
+                          return;
+                        }
                         setState(() {
                           _diaSeleccionado = diaSeleccionado;
                           _diaInicio = diaInicio;
                           strFecha = fmtFecha(diaSeleccionado);
                         });
                         //Logs para los debugs
+                        dev.log(_isDiaMayor(_diaHoy, diaSeleccionado).toString());
                         dev.log('Día seleccionado | fecha=$strFecha', name: 'NR.Calendario', level: 500);
                       },
                       onPageChanged: (diaInicio) => _diaInicio = diaInicio,
