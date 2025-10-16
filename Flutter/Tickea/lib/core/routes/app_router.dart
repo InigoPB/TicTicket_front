@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tickea/features/autenticacion/login_screen.dart';
 import 'package:tickea/features/autenticacion/registro_usuario_screen.dart';
 import 'package:tickea/features/nuevo_registro/calendario_screen.dart';
-import 'package:tickea/features/historico/historico_screen.dart';
+import 'package:tickea/features/historico/presentacion/historico_screen.dart';
 import 'package:tickea/features/nuevo_registro/nueva_foto/nueva_foto.dart';
 import 'package:tickea/features/principal/principal_screen.dart';
 import 'package:tickea/features/splash/splash_screen.dart';

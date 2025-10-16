@@ -250,62 +250,8 @@ class _NuevaFotoState extends State<NuevaFoto> {
     }
   }
 
-  Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
-    final uri = Uri.parse('http://192.168.137.1:8080/tickea/tickets');
-    final payload = <String, dynamic>{
-      'fecha': _fechaFormatoBack(regProv.strFecha),
-      'textoFilas': ocrProv.ocrPorFilas,
-      'uidUsuario': regProv.uidUser,
-    };
-
-    debugPrint('[NuevaFoto] Enviando a Spring: $payload');
-
-    try {
-      final respuesta = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
-      );
-
-      if (respuesta.statusCode >= 200 && respuesta.statusCode < 300) {
-        if (!mounted) return;
-        await AppPopup.alerta(
-          context: context,
-          titulo: 'Enviado',
-          contenido: 'Datos enviados correctamente.',
-          textoOk: 'OK',
-          alerta: false,
-          onOk: () async {},
-        );
-        if (!mounted) return;
-      } else {
-        if (!mounted) return;
-        await AppPopup.alerta(
-          context: context,
-          titulo: 'Error al enviar',
-          contenido: 'El servidor respondió con ${respuesta.statusCode}.',
-          textoOk: 'Cerrar',
-        );
-      }
-    } catch (e) {
-      debugPrint('[NuevaFoto] Error de conexión con Spring: $e');
-      if (!mounted) return;
-      await AppPopup.alerta(
-        context: context,
-        titulo: 'Error de conexión',
-        contenido: 'No se pudo conectar con el backend.\n$e',
-        textoOk: 'Cerrar',
-      );
-    }
-    if (mounted) {
-      final prov = Provider.of<RegistroProvider>(context, listen: false);
-      final uidUser = prov.getUidUser;
-      final dias = await TickeaApi.listarFechasRegistradas(uidUser);
-      prov.setDiasRegistrados(dias);
-    }
-  }
-
   //usamos el dispose para liberar recursos
+
   @override
   void dispose() {
     _camara?.dispose();
@@ -646,6 +592,61 @@ class _NuevaFotoState extends State<NuevaFoto> {
         );
       },
     );
+  }
+
+  Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
+    final uri = Uri.parse('http://192.168.137.1:8080/tickea/tickets');
+    final payload = <String, dynamic>{
+      'fecha': _fechaFormatoBack(regProv.strFecha),
+      'textoFilas': ocrProv.ocrPorFilas,
+      'uidUsuario': regProv.uidUser,
+    };
+
+    debugPrint('[INICIO NuevaFoto] Enviando a Spring: $payload [FIN NuevaFoto]');
+
+    try {
+      final respuesta = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      if (respuesta.statusCode >= 200 && respuesta.statusCode < 300) {
+        if (!mounted) return;
+        await AppPopup.alerta(
+          context: context,
+          titulo: 'Enviado',
+          contenido: 'Datos enviados correctamente.',
+          textoOk: 'OK',
+          alerta: false,
+          onOk: () async {},
+        );
+        if (!mounted) return;
+      } else {
+        if (!mounted) return;
+        await AppPopup.alerta(
+          context: context,
+          titulo: 'Error al enviar',
+          contenido: 'El servidor respondió con ${respuesta.statusCode}.',
+          textoOk: 'Cerrar',
+        );
+      }
+    } catch (e) {
+      debugPrint('[NuevaFoto] Error de conexión con Spring: $e');
+      if (!mounted) return;
+      await AppPopup.alerta(
+        context: context,
+        titulo: 'Error de conexión',
+        contenido: 'No se pudo conectar con el backend.\n$e',
+        textoOk: 'Cerrar',
+      );
+    }
+    if (mounted) {
+      final prov = Provider.of<RegistroProvider>(context, listen: false);
+      final uidUser = prov.getUidUser;
+      final dias = await TickeaApi.listarFechasRegistradas(uidUser);
+      prov.setDiasRegistrados(dias);
+    }
   }
 
   ElevatedButton botonFlotante({
