@@ -6,6 +6,8 @@ class AppColores {
   static const Color fondo = Color(0xFFF6F3EF); // El color de fondo principal
   static const Color falsoBlanco = Color(0xFFFAF8F5); // tono más claro que fondo (F6F3EF)
   static const Color grisClaro = Color(0xFFACBABA); // para bordes inactivos
+  static const Color grisPrimari = Color(0xFF718989); // para grises relacionados con los secundarios
+  static const Color grisSecundari = Color(0xFFA6919A); // para grises relacionados con los primarios
   static const Color primariOscuro = Color(0xFF233C3C); // para tipografias, botones, un negro secundario
   static const Color primario = Color(0xFF1B5D60); // Color principal
   static const Color secundario = Color(0xFFA8547A); // Detalles y selecciones
