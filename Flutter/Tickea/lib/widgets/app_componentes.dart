@@ -9,7 +9,7 @@ class AppBotonPrimario extends StatelessWidget {
   final double tamAncho;
   final double tamAlto;
   final String texto;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const AppBotonPrimario({
     super.key,

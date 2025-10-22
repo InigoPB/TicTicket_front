@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tickea/features/autenticacion/login_screen.dart';
 import 'package:tickea/features/autenticacion/registro_usuario_screen.dart';
+import 'package:tickea/features/historico/datos/historico_api.dart';
 import 'package:tickea/features/nuevo_registro/calendario_screen.dart';
 import 'package:tickea/features/historico/presentacion/historico_screen.dart';
 import 'package:tickea/features/nuevo_registro/nueva_foto/nueva_foto.dart';
 import 'package:tickea/features/principal/principal_screen.dart';
+import 'package:tickea/features/registro/registro_provider.dart';
 import 'package:tickea/features/splash/splash_screen.dart';
+
+final api = HistoricoHttpApi(baseUrl: 'http://192.168.137.1:8080');
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -44,7 +49,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/historico',
       builder: (BuildContext context, GoRouterState state) {
-        return const HistoricoScreen();
+        return HistoricoScreen(api: api, obtenerUid: () => context.read<RegistroProvider>().uidUser);
       },
     ),
     GoRoute(

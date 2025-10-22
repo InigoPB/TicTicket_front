@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 // 1. Colores
@@ -55,18 +57,14 @@ class AppEstiloTexto {
     color: AppColores.textoOscuro,
   );
 
-  static const TextStyle boton = TextStyle(
-    fontFamily: AppFonts.mainFont,
-    fontSize: AppTamanios.lg,
-    fontWeight: FontWeight.bold,
-    color: AppColores.fondo,
-    shadows: [
-      Shadow(offset: Offset(1, 1), color: AppColores.grisClaro),
-      Shadow(offset: Offset(-1, 1), color: AppColores.grisClaro),
-      Shadow(offset: Offset(1, -1), color: AppColores.grisClaro),
-      Shadow(offset: Offset(-1, -1), color: AppColores.grisClaro),
-    ], //Para hacer el borde usamos la sombra porque no nos deja meter borde el TextStyle.
-  );
+  static TextStyle boton = TextStyle(
+      fontFamily: AppFonts.mainFont,
+      fontSize: AppTamanios.lg,
+      fontWeight: FontWeight.bold,
+      color: AppColores.fondo,
+      shadows: shadows(1)
+      //Para hacer el borde usamos la sombra porque no nos deja meter borde el TextStyle.
+      );
 
   static const TextStyle cuerpo = TextStyle(
     fontFamily: AppFonts.mainFont,
@@ -101,6 +99,15 @@ class AppEstiloTexto {
     fontWeight: FontWeight.bold,
     color: AppColores.error,
   );
+
+  static List<Shadow> shadows(double grosor) {
+    return [
+      Shadow(offset: Offset(grosor, grosor), color: AppColores.grisClaro),
+      Shadow(offset: Offset(-grosor, grosor), color: AppColores.grisClaro),
+      Shadow(offset: Offset(grosor, -grosor), color: AppColores.grisClaro),
+      Shadow(offset: Offset(-grosor, -grosor), color: AppColores.grisClaro),
+    ];
+  }
 }
 
 // 5. Texto widget
