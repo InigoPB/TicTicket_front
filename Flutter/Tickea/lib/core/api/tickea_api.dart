@@ -25,4 +25,31 @@ class TickeaApi {
     debugPrint('[TickeaApi] fechasFormateadas=$fechasFormateadas');
     return fechasFormateadas;
   }
+
+  Future<http.Response> enviarTicket({
+    required String uidUsuario,
+    required String fecha, //'yyyy-MM-dd'
+    required List<Map<String, dynamic>> productos,
+  }) async {
+    final uri = Uri.parse(
+      '$baseUrl/tickea/StartJob+?uidUsuario=$uidUsuario&fecha=$fecha',
+    );
+    final body = jsonEncode({'textoFilas': productos});
+    debugPrint('[TickeaApi] POST $uri');
+    debugPrint('[TickeaApi] Body (productosJson): $body');
+
+    try {
+      final respuesta = await http.post(
+        uri,
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+      debugPrint('[TickeaApi] Response status: ${respuesta.statusCode}');
+      debugPrint('[TickeaApi] Response body: ${respuesta.body}');
+      return respuesta;
+    } catch (e) {
+      debugPrint('[TickeaApi] Error al enviar el ticket: $e');
+      rethrow;
+    }
+  }
 }

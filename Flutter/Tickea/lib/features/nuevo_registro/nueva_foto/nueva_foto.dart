@@ -570,15 +570,8 @@ class _NuevaFotoState extends State<NuevaFoto> {
 
                       const Divider(color: AppColores.secundario),
 
-                      /// Contenido según el modo seleccionado.
                       SelectableText(
                         ocrProv.ocrPorFilas,
-                        /*switch (modo) {
-                          _VistaTexto.bruto => ocrProv.ocrBruto,
-                          _VistaTexto.filas => ocrProv.ocrPorFilas,
-                          _VistaTexto.filasMarcado => ocrProv.ocrPorFilasMarcado,
-                          _VistaTexto.compacto => ocrProv.ocrCompacto,
-                        },*/
                         style: AppEstiloTexto.notaM,
                       ),
 
@@ -595,20 +588,17 @@ class _NuevaFotoState extends State<NuevaFoto> {
   }
 
   Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
-    final uri = Uri.parse('http://192.168.137.1:8080/tickea/tickets');
-    final payload = <String, dynamic>{
-      'fecha': _fechaFormatoBack(regProv.strFecha),
-      'textoFilas': ocrProv.ocrPorFilas,
-      'uidUsuario': regProv.uidUser,
-    };
-
-    debugPrint('[INICIO NuevaFoto] Enviando a Spring: $payload [FIN NuevaFoto]');
-
     try {
-      final respuesta = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(payload),
+      final api = TickeaApi();
+      final fecha = _fechaFormatoBack(regProv.strFecha); // de dd_MM_yyyy -> yyyy-MM-dd
+      final lineas = ocrProv.ocrPorFilas;
+
+      debugPrint('[NuevaFoto] Enviando ticket: uid=${regProv.uidUser}, fecha=$fecha, lineas=${lineas.length}');
+
+      final respuesta = await api.enviarTicket(
+        uidUsuario: regProv.uidUser,
+        fecha: fecha,
+        productos: lineas.split("\n").map((linea) => {'texto': linea}).toList(),
       );
 
       if (respuesta.statusCode >= 200 && respuesta.statusCode < 300) {
@@ -619,9 +609,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
           contenido: 'Datos enviados correctamente.',
           textoOk: 'OK',
           alerta: false,
-          onOk: () async {},
         );
-        if (!mounted) return;
       } else {
         if (!mounted) return;
         await AppPopup.alerta(
@@ -629,18 +617,21 @@ class _NuevaFotoState extends State<NuevaFoto> {
           titulo: 'Error al enviar',
           contenido: 'El servidor respondió con ${respuesta.statusCode}.',
           textoOk: 'Cerrar',
+          alerta: true,
         );
       }
     } catch (e) {
-      debugPrint('[NuevaFoto] Error de conexión con Spring: $e');
+      debugPrint('[NuevaFoto] Error al enviar ticket: $e');
       if (!mounted) return;
       await AppPopup.alerta(
         context: context,
         titulo: 'Error de conexión',
         contenido: 'No se pudo conectar con el backend.\n$e',
         textoOk: 'Cerrar',
+        alerta: true,
       );
     }
+
     if (mounted) {
       final prov = Provider.of<RegistroProvider>(context, listen: false);
       final uidUser = prov.getUidUser;
