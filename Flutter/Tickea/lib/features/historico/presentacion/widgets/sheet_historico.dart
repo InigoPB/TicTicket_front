@@ -53,9 +53,27 @@ class HistoricoSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppTamanios.base / 2),
                   ),
                 ),
-                const SizedBox(height: 12),
-                AppTexto.titulo(titulo),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppTamanios.md),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColores.grisPrimari.withOpacity(0.06), // opcional, tu estilo
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      titulo,
+                      softWrap: true,
+                      maxLines: null,
+                      overflow: TextOverflow.visible,
+                      style: AppEstiloTexto.titulo.copyWith(
+                        color: AppColores.primariOscuro,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: Builder(
                     builder: (context) {

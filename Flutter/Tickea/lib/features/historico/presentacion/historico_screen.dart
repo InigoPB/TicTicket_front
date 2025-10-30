@@ -10,6 +10,7 @@ import 'package:tickea/features/historico/presentacion/widgets/modo_selector.dar
 import 'package:tickea/features/historico/presentacion/widgets/sheet_historico.dart';
 import 'package:tickea/features/historico/presentacion/widgets/ver_registros_boton.dart';
 import 'package:tickea/widgets/app_componentes.dart';
+import 'package:tickea/widgets/app_popups.dart';
 
 class HistoricoScreen extends StatelessWidget {
   final HistoricoApi api;
@@ -43,8 +44,8 @@ class _HistoricoView extends StatelessWidget {
       final respuesta = await notificacion.buscar();
       final estado = notificacion.state;
       final titulo = estado.modo == HistoricoModo.dia
-          ? 'Histórico del ${fecha.format(estado.diaSeleccionado!)}'
-          : 'Histórico del ${fecha.format(estado.rangoDesde!)} al ${fecha.format(estado.rangoHasta!)}';
+          ? 'Histórico\n${fecha.format(estado.diaSeleccionado!)}'
+          : 'Histórico\n${fecha.format(estado.rangoDesde!)}\n a \n${fecha.format(estado.rangoHasta!)}';
       await showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -73,26 +74,17 @@ class _HistoricoView extends StatelessWidget {
       final texto = estado.modo == HistoricoModo.dia
           ? '¿Deseas ver el histórico del ${fecha.format(estado.diaSeleccionado!)} ?'
           : '¿Deseas ver el histórico desde el ${fecha.format(estado.rangoDesde!)} hasta el ${fecha.format(estado.rangoHasta!)}?';
-      final ok = await showDialog<bool>(
+      await AppPopup.confirmacion(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Confirmar selección'),
-          content: Text(texto),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Confirmar'),
-            ),
-          ],
-        ),
+        titulo: 'Confirmar selección',
+        contenido: texto,
+        textoSi: 'Confirmar',
+        alerta: false,
+        onSi: () async {
+          notificacion.confirmarSeleccion();
+        },
+        textoNo: 'cancelar',
       );
-      if (ok == true) {
-        notificacion.confirmarSeleccion();
-      }
     }
 
     return Scaffold(
@@ -119,9 +111,19 @@ class _HistoricoView extends StatelessWidget {
               ),
               const SizedBox(height: AppTamanios.base),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: FilledButton.tonal(
+                  AppBotonPrimario(
+                    onPressed: () async {
+                      final valid = estado.modo == HistoricoModo.dia ? estado.isDiaValido : estado.isRangoValido;
+                      if (!valid) return;
+                      await _confirmacionPopup();
+                    },
+                    texto: 'Confirmar selección',
+                    tamAncho: AppTamanios.xxxl * 6,
+                    tamAlto: AppTamanios.xxxl,
+                  )
+                  /*child: FilledButton.tonal(
                       onPressed: () async {
                         final valid = estado.modo == HistoricoModo.dia ? estado.isDiaValido : estado.isRangoValido;
                         if (!valid) return;
@@ -129,7 +131,7 @@ class _HistoricoView extends StatelessWidget {
                       },
                       child: const Text('Confirmar selección'),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
               const SizedBox(height: AppTamanios.base),

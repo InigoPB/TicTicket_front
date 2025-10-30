@@ -34,10 +34,10 @@ class Producto {
     }
 
     return Producto(
-      nombre: (json['nombre'] ?? '').toString(),
-      codigo: (json['codigo'] ?? '').toString(),
+      nombre: (json['nombreProducto'] ?? '').toString(),
+      codigo: (json['codigoProducto'] ?? '').toString(),
       operaciones: _toInt(json['operaciones']),
-      importeTotal: _toDouble(json['importeTotal']),
+      importeTotal: _toDouble(json['totalImporte'] ?? json['importe_total']),
       peso: _toDouble(json['peso']),
       unidades: _toInt(json['unidades']),
     );

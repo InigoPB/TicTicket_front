@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickea/features/historico/datos/modelos/res_historico.dart';
+
+import 'modelos/producto.dart';
 
 abstract class HistoricoApi {
   Future<ResHistorico> listarPorDia({
@@ -25,11 +29,10 @@ class HistoricoHttpApi implements HistoricoApi {
   }) : client = client ?? http.Client();
 
   String _formateoFecha(DateTime dia) {
-    // dd_MM_yyyy
-    final dd = dia.day.toString().padLeft(2, '0');
+    final yyyy = dia.year.toString().padLeft(4, '0');
     final mm = dia.month.toString().padLeft(2, '0');
-    final yyyy = dia.year.toString();
-    return '$dd\_$mm\_$yyyy';
+    final dd = dia.day.toString().padLeft(2, '0');
+    return '$yyyy-$mm-$dd';
   }
 
 // Construimos la URI con parámetros de forma mas o menos dinamica.
@@ -37,13 +40,23 @@ class HistoricoHttpApi implements HistoricoApi {
     return Uri.parse('$baseUrl$ruta').replace(queryParameters: parametros);
   }
 
-// Manejo de respuestas
   Future<ResHistorico> _mensajesRes(http.Response res) async {
     if (res.statusCode == 200) {
-      final json = jsonDecode(res.body) as Map<String, dynamic>;
-      return ResHistorico.fromJson(json);
+      final json = jsonDecode(res.body);
+      _logHttp('PARSED JSON', payload: json);
+      if (json is List) {
+        // El endpoint devuelve un array de productos
+        final productos = json.whereType<Map<String, dynamic>>().map((e) => Producto.fromJson(e)).toList();
+        return ResHistorico(productos: productos);
+      } else if (json is Map<String, dynamic>) {
+        //Me aseguro la compatibilidad con esto
+        return ResHistorico.fromJson(json);
+      } else {
+        throw HistoricoServerError('Formato de respuesta no reconocido');
+      }
     }
     if (res.statusCode == 404) {
+      _logHttp('PARSE_ERROR', payload: res.body);
       throw HistoricoNotFound('No se encontraron registros');
     }
     throw HistoricoServerError('Error del servidor (${res.statusCode})');
@@ -56,10 +69,16 @@ class HistoricoHttpApi implements HistoricoApi {
     required DateTime fecha,
   }) async {
     final fechaFormateada = _formateoFecha(fecha);
-    final uri = _constructorUri('/historico/dia', {
+    final uri = _constructorUri('/tickea/ticket-items', {
       'uid': uid,
       'fecha': fechaFormateada,
     });
+    _logHttp('GET', uri: uri);
+    final sw = Stopwatch()..start();
+    final res = await http.get(uri);
+    sw.stop();
+    _logHttp('RES', uri: uri, status: res.statusCode, payload: res.body, took: sw.elapsed);
+
     try {
       final res = await client.get(uri).timeout(const Duration(seconds: 15));
       return _mensajesRes(res);
@@ -79,11 +98,18 @@ class HistoricoHttpApi implements HistoricoApi {
   }) async {
     final desdeFormateada = _formateoFecha(desde);
     final hastaFormateada = _formateoFecha(hasta);
-    final uri = _constructorUri('/historico/rango', {
+    final uri = _constructorUri('/tickea/ticket-items/rango', {
       'uid': uid,
       'desde': desdeFormateada,
       'hasta': hastaFormateada,
     });
+
+    _logHttp('GET', uri: uri);
+    final sw = Stopwatch()..start();
+    final res = await http.get(uri);
+    sw.stop();
+    _logHttp('RES', uri: uri, status: res.statusCode, payload: res.body, took: sw.elapsed);
+
     try {
       final res = await client.get(uri).timeout(const Duration(seconds: 15));
       return _mensajesRes(res);
@@ -91,6 +117,32 @@ class HistoricoHttpApi implements HistoricoApi {
       rethrow;
     } on Exception catch (e) {
       throw HistoricoNetworkError('Fallo de red: $e');
+    }
+  }
+}
+
+void _logHttp(
+  String label, {
+  Uri? uri,
+  int? status,
+  Object? payload,
+  Duration? took,
+}) {
+  if (!kDebugMode) return;
+
+  final buffer = StringBuffer('[HistoricoApi] $label');
+  if (uri != null) buffer.writeln('\n  URI: $uri');
+  if (status != null) buffer.writeln('  Status: $status');
+  if (took != null) buffer.writeln('  Took: ${took.inMilliseconds} ms');
+  log(buffer.toString());
+  if (payload != null) {
+    try {
+      final pretty = const JsonEncoder.withIndent('  ').convert(
+        payload is String ? jsonDecode(payload) : payload,
+      );
+      debugPrint(pretty); // respeta ancho y evita cortar
+    } catch (_) {
+      debugPrint(payload.toString());
     }
   }
 }

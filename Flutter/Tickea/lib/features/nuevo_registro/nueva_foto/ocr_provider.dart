@@ -9,13 +9,13 @@ enum OcrEstado { inactivo, capturando, reconociendo, error }
 
 const int _ventanaFilas = 3;
 
-/// cuántas filas recientes probar (curvatura papel)
+// cuántas filas recientes
 const double _facTolCentro = 0.65;
 
-/// factor para tolerancia por centro (antes ~0.6)
+// factor para tolerancia por centro
 const double _minOverlapFrac = 0.35;
 
-/// % mínimo de solape (antes 0.25)
+// % mínimo de solape
 
 class OcrProvider extends ChangeNotifier {
   OcrProvider({required OcrServicio ocrServicio}) : _ocrServicio = ocrServicio;
@@ -100,49 +100,6 @@ class OcrProvider extends ChangeNotifier {
     super.dispose();
   }
 
-  /*String _aFilas(
-    List<OcrElemento> elems,
-  ) {
-    if (elems.isEmpty) return '';
-
-    // 1) Tolerancia vertical basada en la mediana de alturas
-    final alturas = elems.map((e) => e.alto).where((h) => h > 0).toList()..sort();
-    final mediana = alturas.isEmpty
-        ? 0.0
-        : (alturas.length.isOdd
-            ? alturas[alturas.length ~/ 2]
-            : (alturas[alturas.length ~/ 2 - 1] + alturas[alturas.length ~/ 2]) / 2);
-    final tolY = (mediana * 0.6).clamp(8.0, double.infinity);
-
-    // 2) Ordenar por centroY (arriba -> abajo)
-    final ordenados = List<OcrElemento>.from(elems)..sort((a, b) => a.centroY.compareTo(b.centroY));
-
-    // 3) Agrupar en filas por banda vertical
-    final filas = <List<OcrElemento>>[];
-    for (final e in ordenados) {
-      if (filas.isEmpty) {
-        filas.add([e]);
-        continue;
-      }
-      final ultima = filas.last;
-      final centroFila = ultima.map((x) => x.centroY).reduce((a, b) => a + b) / ultima.length;
-      if ((e.centroY - centroFila).abs() <= tolY) {
-        ultima.add(e);
-      } else {
-        filas.add([e]);
-      }
-    }
-
-    // 4) Orden dentro de fila por X (izq -> der) y unir con separador
-    final sb = StringBuffer();
-    for (var i = 0; i < filas.length; i++) {
-      final fila = filas[i]..sort((a, b) => a.caja.left.compareTo(b.caja.left));
-      sb.write(fila.map((w) => w.texto).join(" "));
-      if (i < filas.length - 1) sb.write('\n');
-    }
-    return sb.toString();
-  }*/
-
   String _aFilas(
     List<OcrElemento> elems,
   ) {
@@ -156,10 +113,10 @@ class OcrProvider extends ChangeNotifier {
             : (alturas[alturas.length ~/ 2 - 1] + alturas[alturas.length ~/ 2]) / 2);
     final tolBaseCentro = (mediana * _facTolCentro).clamp(6.0, double.infinity);
 
-    // Arriba -> abajo
+    // Arriba es abajo
     final ordenados = List<OcrElemento>.from(elems)..sort((a, b) => a.centroY.compareTo(b.centroY));
 
-    /// Cada fila mantiene su banda vertical dinámica.
+    // Cada fila mantiene su banda vertical dinámica.
     final filas = <_FilaBand>[];
     for (final e in ordenados) {
       if (filas.isEmpty) {
@@ -187,7 +144,7 @@ class OcrProvider extends ChangeNotifier {
           continue;
         }
 
-        // Probar con las últimas N filas (mitiga “bamboleo” del papel).
+        // Probar con las ultimas filas (para el bamboleo del papel).
         _FilaBand? candidata;
         for (final f in filas.reversed.take(_ventanaFilas)) {
           if (_encaja(e, f)) {
@@ -212,7 +169,7 @@ class OcrProvider extends ChangeNotifier {
       return sb.toString();
     }
 
-    /// Dentro de cada fila: ordenar por X e imprimir con el separador.
+    // Dentro de cada fila: ordenar por X e imprimir con el separador.
     final sb = StringBuffer();
     for (var i = 0; i < filas.length; i++) {
       final filaOrdenada = filas[i].elements..sort((a, b) => a.caja.left.compareTo(b.caja.left));
@@ -232,7 +189,7 @@ class OcrProvider extends ChangeNotifier {
   }
 }
 
-/// Banda vertical de una fila (mínimo estado posible).
+// Banda vertical de una fila (mínimo estado posible).
 class _FilaBand {
   double top;
   double bottom;
@@ -244,10 +201,10 @@ class _FilaBand {
 
   _FilaBand._(this.top, this.bottom, this._sumCentro, this._count, this.elements);
 
-  /// Crea la fila con el primer elemento.
+  //Crea la fila con el primer elemento.
   factory _FilaBand.iniciaCon(OcrElemento e) => _FilaBand._(e.caja.top, e.caja.bottom, e.centroY, 1, [e]);
 
-  /// Añade un elemento y expande la banda vertical.
+  //Añade un elemento y expande la banda vertical.
   void add(OcrElemento e) {
     elements.add(e);
     top = math.min(top, e.caja.top);

@@ -23,7 +23,7 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
         ruta: '/login',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

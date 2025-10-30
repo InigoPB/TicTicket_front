@@ -34,16 +34,23 @@ class HistoricoCalendario extends StatelessWidget {
     final fechasRegistradas = context.select<RegistroProvider, Set<DateTime>>(
       (p) => p.diasRegistrados,
     );
-    bool isRegistrado(DateTime dia) {
+
+    bool _isDiaRegistrado(DateTime dia) {
       final diaSinHora = DateTime(dia.year, dia.month, dia.day);
       return fechasRegistradas.contains(diaSinHora);
+    }
+
+    bool _isDiaMayor(DateTime dia1, DateTime dia2) {
+      final d1 = DateTime(dia1.year, dia1.month, dia1.day);
+      final d2 = DateTime(dia2.year, dia2.month, dia2.day);
+      return d1.isBefore(d2);
     }
 
     final rangoSeleccionado =
         modo == HistoricoModo.rango ? RangeSelectionMode.toggledOn : RangeSelectionMode.toggledOff;
 
     return TableCalendar(
-      enabledDayPredicate: isRegistrado,
+      enabledDayPredicate: (dia) => _isDiaRegistrado(dia),
       locale: 'es_ES',
       firstDay: primerDia,
       lastDay: ultimoDia,
@@ -66,7 +73,7 @@ class HistoricoCalendario extends StatelessWidget {
       },
       calendarStyle: CalendarStyle(
         isTodayHighlighted: true,
-        defaultTextStyle: AppEstiloTexto.cuerpo.copyWith(color: AppColores.falsoBlanco, fontWeight: FontWeight.w900),
+        defaultTextStyle: AppEstiloTexto.cuerpo.copyWith(fontWeight: FontWeight.w900),
         rangeHighlightColor: AppColores.grisPrimari.withOpacity(0.3),
         rangeStartDecoration: const BoxDecoration(
           color: AppColores.secundario,
@@ -85,12 +92,25 @@ class HistoricoCalendario extends StatelessWidget {
           ),
         ),
         selectedDecoration: const BoxDecoration(
-          color: AppColores.secundariOscuro,
-          shape: BoxShape.circle,
+          color: AppColores.primario,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(AppTamanios.sm)),
+          border: Border.fromBorderSide(
+            BorderSide(
+              color: AppColores.primariOscuro,
+              width: 2,
+            ),
+          ),
         ),
         todayDecoration: const BoxDecoration(
-          color: AppColores.primariOscuro,
-          shape: BoxShape.circle,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(AppTamanios.sm)),
+          border: Border.fromBorderSide(
+            BorderSide(
+              color: AppColores.secundariOscuro,
+              width: 2,
+            ),
+          ),
         ),
       ),
       startingDayOfWeek: StartingDayOfWeek.monday,
@@ -127,105 +147,90 @@ class HistoricoCalendario extends StatelessWidget {
         ),
       ),
       daysOfWeekHeight: AppTamanios.xl,
-      /*calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, dia, diaInicio) {
-                          final isDiaRegistrado = _isDiaRegistrado(dia);
-                          return Stack(
-                            children: [
-                              Center(
-                                child: Text(
-                                  '${dia.day}',
-                                  style: AppEstiloTexto.cuerpo.copyWith(
-                                    fontSize:
-                                        _isDiaMayor(_diaHoy, dia) ? AppTamanios.base * 1.5 : AppTamanios.base * 2.0,
-                                    color: isDiaRegistrado ? AppColores.grisClaro : AppColores.primario,
-                                    shadows: AppExtraBold.extraBold(
-                                        AppColores.primario, _isDiaMayor(_diaHoy, dia) ? .1 : 0.3),
-                                  ),
-                                ),
-                              ),
-                              if (isDiaRegistrado)
-                                Positioned.fill(
-                                  child: IgnorePointer(
-                                    child: Opacity(
-                                      opacity: 0.8,
-                                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.scaleDown),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        },
-                        selectedBuilder: (context, dia, diaInicio) {
-                          final isDiaRegistrado = _isDiaRegistrado(dia);
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: AppColores.primario,
-                              borderRadius: BorderRadius.circular(AppTamanios.base),
-                              border: Border.all(width: 2, color: AppColores.primariOscuro),
-                              boxShadow: AppSombra.contenedores(),
-                            ),
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    '${dia.day}',
-                                    style: AppEstiloTexto.subtitulo.copyWith(
-                                      color: AppColores.fondo,
-                                      shadows: AppExtraBold.extraBold(AppColores.fondo, .5),
-                                    ),
-                                  ),
-                                ),
-                                if (isDiaRegistrado)
-                                  Positioned.fill(
-                                    child: IgnorePointer(
-                                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.contain),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                        todayBuilder: (context, dia, diaInicio) {
-                          bool isRegistrado = _isDiaRegistrado(dia);
-                          return DecoratedBox(
-                            decoration: BoxDecoration(
-                              boxShadow: AppSombra.contenedores(
-                                color: AppColores.secundariOscuro,
-                                difuminado: 2,
-                                ejeH: -.5,
-                                ejeV: -.5,
-                                opacidad: .2,
-                                direccion: BlurStyle.solid,
-                              ),
-                              color: AppColores.fondo,
-                              border: Border.all(
-                                  width: 2, color: !isRegistrado ? AppColores.secundariOscuro : AppColores.grisClaro),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    '${dia.day}',
-                                    style: AppEstiloTexto.cuerpo.copyWith(
-                                      fontSize: AppTamanios.base * 2.5,
-                                      color: AppColores.secundariOscuro,
-                                      shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
-                                    ),
-                                  ),
-                                ),
-                                if (_isDiaRegistrado(dia))
-                                  Positioned.fill(
-                                    child: IgnorePointer(
-                                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.contain),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),*/
+      calendarBuilders: CalendarBuilders(
+        defaultBuilder: (context, dia, diaInicio) {
+          final isDiaRegistrado = _isDiaRegistrado(dia);
+          return Stack(
+            children: [
+              Center(
+                child: Text(
+                  '${dia.day}',
+                  style: AppEstiloTexto.cuerpo.copyWith(
+                    fontSize: AppTamanios.base * 2.5,
+                    color: AppColores.primario,
+                    shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
+                  ),
+                ),
+              ),
+              if (!isDiaRegistrado)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: 0.8,
+                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.scaleDown),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+        selectedBuilder: (context, dia, diaInicio) {
+          final isDiaRegistrado = _isDiaRegistrado(dia);
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColores.primario,
+              borderRadius: BorderRadius.circular(AppTamanios.base),
+              border: Border.all(width: 2, color: AppColores.primariOscuro),
+              boxShadow: AppSombra.contenedores(),
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Text(
+                    '${dia.day}',
+                    style: AppEstiloTexto.subtitulo.copyWith(
+                      color: AppColores.fondo,
+                      shadows: AppExtraBold.extraBold(AppColores.fondo, .5),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        todayBuilder: (context, dia, diaInicio) {
+          bool isRegistrado = _isDiaRegistrado(dia);
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              boxShadow: AppSombra.contenedores(
+                color: AppColores.secundariOscuro,
+                difuminado: 2,
+                ejeH: -.5,
+                ejeV: -.5,
+                opacidad: .2,
+                direccion: BlurStyle.solid,
+              ),
+              color: AppColores.fondo,
+              border: Border.all(width: 2, color: !isRegistrado ? AppColores.secundariOscuro : AppColores.grisClaro),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Text(
+                    '${dia.day}',
+                    style: AppEstiloTexto.cuerpo.copyWith(
+                      fontSize: AppTamanios.base * 2.5,
+                      color: AppColores.secundariOscuro,
+                      shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     ); // Placeholder
   }
 }

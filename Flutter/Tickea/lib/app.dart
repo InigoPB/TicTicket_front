@@ -11,7 +11,11 @@ class TickeaApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
       title: 'Tickea',
-      theme: ThemeData.dark(),
+      theme: ThemeData.dark().copyWith(
+        textSelectionTheme: const TextSelectionThemeData(
+          selectionHandleColor: Color(0xFF305252),
+        ),
+      ),
       //Para poder usar diferentes bibliotecas en español
       supportedLocales: const [
         Locale('es', 'ES'), // Español

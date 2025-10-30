@@ -29,10 +29,10 @@ class TickeaApi {
   Future<http.Response> enviarTicket({
     required String uidUsuario,
     required String fecha, //'yyyy-MM-dd'
-    required List<Map<String, dynamic>> productos,
+    required String productos,
   }) async {
     final uri = Uri.parse(
-      '$baseUrl/tickea/StartJob+?uidUsuario=$uidUsuario&fecha=$fecha',
+      '$baseUrl/tickea/StartJob?fecha=$fecha&uidUsuario=$uidUsuario',
     );
     final body = jsonEncode({'textoFilas': productos});
     debugPrint('[TickeaApi] POST $uri');

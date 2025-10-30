@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tickea/core/theme/app_styles.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,10 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset('assets/img/tickea_logo.png', height: 100),
-            SizedBox(height: 20),
-            Text("Cargando TICKea...", style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-            CircularProgressIndicator(),
+            const SizedBox(height: 20),
+            const Text("Cargando TICKea...", style: TextStyle(fontSize: 20)),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              color: AppColores.primario,
+            ),
           ],
         ),
       ),

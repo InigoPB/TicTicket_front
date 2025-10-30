@@ -23,8 +23,7 @@ class ProductoEsteticaTicket extends StatelessWidget {
         TextSpan(
           children: [
             TextSpan(
-                text: clave.padRight(AppTamanios.md as int),
-                style: AppEstiloTexto.cuerpo.copyWith(shadows: AppEstiloTexto.shadows(0.5))),
+                text: clave.padRight(16), style: AppEstiloTexto.cuerpo.copyWith(shadows: AppEstiloTexto.shadows(0.5))),
             const TextSpan(text: '  '),
             TextSpan(text: valor, style: AppEstiloTexto.cuerpo),
           ],
@@ -33,22 +32,24 @@ class ProductoEsteticaTicket extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTamanios.sm),
+      padding: const EdgeInsets.only(left: AppTamanios.lg, right: AppTamanios.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            textAlign: TextAlign.center,
-            producto.nombre.toUpperCase(),
-            style: AppEstiloTexto.subtitulo,
+          Center(
+            child: Text(
+              producto.nombre.toUpperCase(),
+              style: AppEstiloTexto.subtitulo
+                  .copyWith(color: AppColores.primariOscuro, shadows: AppEstiloTexto.shadows(0.5)),
+            ),
           ),
-          const SizedBox(height: AppTamanios.base / 2),
+          const SizedBox(height: AppTamanios.base),
           textClaveValor('Operaciones:', '${producto.operaciones}'),
           textClaveValor('Total Impor:', '${producto.importeTotal}'),
           textClaveValor('Peso:', '${producto.peso}'),
           textClaveValor('Unidades:', '${producto.unidades}'),
-          const SizedBox(height: AppTamanios.sm),
-          const Text(separacion, style: AppEstiloTexto.cuerpo),
+          const SizedBox(height: AppTamanios.base),
+          const Center(child: Text(separacion, style: AppEstiloTexto.cuerpo)),
         ],
       ),
     );

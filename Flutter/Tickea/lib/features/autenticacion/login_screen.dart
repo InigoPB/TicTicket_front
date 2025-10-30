@@ -24,6 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> login() async {
     try {
+      const CircularProgressIndicator(
+        color: AppColores.primario,
+        backgroundColor: AppColores.grisSecundari,
+      );
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailCtrl.text.trim(),
         password: passwordCtrl.text.trim(),
@@ -39,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       ///TODO: meter un spinner de carga para la espera
-      const CircularProgressIndicator();
+
       goToPrincipal();
     } on FirebaseAuthException catch (e) {
       setState(
@@ -50,6 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
             contenido: 'Error al iniciar sesión: ${e.message}',
             textoSi: 'Registrarse',
             onSi: () async {
+              const CircularProgressIndicator(
+                color: AppColores.primario,
+                backgroundColor: AppColores.grisSecundari,
+              );
               context.go('/register');
             },
             textoNo: 'Volver',

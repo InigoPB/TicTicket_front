@@ -227,6 +227,9 @@ class _AppCampoTextoState extends State<AppCampoTexto> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             alignment: Alignment.centerLeft,
             child: TextField(
+              enableInteractiveSelection: true,
+              cursorColor: AppColores.primario,
+              cursorErrorColor: AppColores.error,
               keyboardType: keyboardType,
               focusNode: _focusNode,
               controller: widget.controlador,

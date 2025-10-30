@@ -588,6 +588,9 @@ class _NuevaFotoState extends State<NuevaFoto> {
   }
 
   Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
+    const CircularProgressIndicator(
+      color: AppColores.primario,
+    );
     try {
       final api = TickeaApi();
       final fecha = _fechaFormatoBack(regProv.strFecha); // de dd_MM_yyyy -> yyyy-MM-dd
@@ -598,7 +601,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
       final respuesta = await api.enviarTicket(
         uidUsuario: regProv.uidUser,
         fecha: fecha,
-        productos: lineas.split("\n").map((linea) => {'texto': linea}).toList(),
+        productos: lineas,
       );
 
       if (respuesta.statusCode >= 200 && respuesta.statusCode < 300) {
