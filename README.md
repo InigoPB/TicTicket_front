@@ -24,15 +24,13 @@ Este documento explica paso a paso cómo levantar **todas las partes del sistema
 
 | Recurso | Enlace / Forma de acceso |
 |----------|--------------------------|
-| **Frontend (Flutter)** | [Repositorio TICKEAFRONT](https://github.com/usuario/tickea_front) |
-| **Backend (Spring Boot)** | [Repositorio TICKEABACK](https://github.com/usuario/tickea_back) |
-| **Diseño Figma** | [Enlace al diseño](https://www.figma.com/file/xxxxx/TickeaApp) |
-| **Jira (gestión de tareas)** | [Enlace al tablero](https://tickea.atlassian.net/jira/software/c/projects/TIC/board) |
-| **Firebase Console** | [Proyecto Firebase](https://console.firebase.google.com/project/tickea-project) |
+| **Frontend (Flutter)** | [Repositorio TICKEAFRONT](https://github.com/InigoPB/TicTicket_front) |
+| **Backend (Spring Boot)** | [Repositorio TICKEABACK](https://github.com/InigoPB/TicTicket_back) |
+| **Diseño Figma** | [Enlace al diseño](https://www.figma.com/design/NaWCs2GNijpM2JFYCaMTYF/TICKEA?node-id=0-1&m=dev&t=kt4tdnQ2dKruW3D0-1) |
+| **Jira (gestión de tareas)** | [Enlace al tablero](https://tickea.atlassian.net/jira/software/projects/TIC/boards/1?atlOrigin=eyJpIjoiNjVhZTZmYmViZTI2NGFjZGE1MWYwYjZiMTc5ZDdhNWMiLCJwIjoiaiJ9) |
+| **Firebase Console** | [Proyecto Firebase]() |
 | **Base de datos (Aiven MySQL)** | Conexión mediante variables de entorno (`DB_URL`, `DB_USER`, `DB_PASSWORD`) |
 | **UiPath Orchestrator** | Configuración hardcodeada en backend (no requiere cambios) |
-
-> Si el profesor no puede acceder a alguno de los enlaces, dale permisos de **"Viewer"** en Figma, Jira y Firebase.
 
 ---
 
@@ -61,3 +59,11 @@ export DB_USER="tickeaAdmin"
 export DB_PASSWORD="AVNS_XXXXXX"
 export SERVER_PORT=8080
 export SPRING_PROFILES_ACTIVE=local
+
+### Windows
+```PowerShell
+$env:DB_URL="jdbc:mysql://HOST:PORT/defaultdb?ssl-mode=REQUIRED"
+$env:DB_USER="tickeaAdmin"
+$env:DB_PASSWORD="AVNS_XXXXXX"
+$env:SERVER_PORT="8080"
+$env:SPRING_PROFILES_ACTIVE="local"
