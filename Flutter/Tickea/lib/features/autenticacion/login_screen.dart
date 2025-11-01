@@ -83,43 +83,51 @@ class _LoginScreenState extends State<LoginScreen> {
         mostrarAtras: false,
       ),
       backgroundColor: AppColores.fondo,
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            AppCampoTexto(
-              controlador: emailCtrl,
-              tamAncho: double.infinity,
-              titulo: 'EMAIL',
-            ),
-            const SizedBox(height: 8),
-            AppCampoTexto(
-              controlador: passwordCtrl,
-              tamAncho: double.infinity,
-              titulo: 'CONTRASEÑA',
-              modoClave: true,
-            ),
-            const SizedBox(height: 24),
-            AppBotonPrimario(
-              //Btn de inicio
-              tamAncho: 240,
-              tamAlto: 48,
-              texto: 'Inicio',
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const Image(
+                image: AssetImage('assets/img/usuario_avatar.png'),
+                width: 300,
+                height: 300,
+              ),
+              AppCampoTexto(
+                controlador: emailCtrl,
+                tamAncho: double.infinity,
+                titulo: 'EMAIL',
+              ),
+              const SizedBox(height: 8),
+              AppCampoTexto(
+                controlador: passwordCtrl,
+                tamAncho: double.infinity,
+                titulo: 'CONTRASEÑA',
+                modoClave: true,
+              ),
+              const SizedBox(height: 24),
+              AppBotonPrimario(
+                //Btn de inicio
+                tamAncho: 240,
+                tamAlto: 48,
+                texto: 'Inicio',
 
-              ///TODO: meter un spinner de carga para la espera
-              onPressed: login,
-            ),
-            const SizedBox(height: 24),
-            AppBotonPrimario(
-              //Btn de Registro
-              tamAncho: 240,
-              tamAlto: 48,
-              texto: 'Registrarse',
-              onPressed: goToRegister,
-            ),
-            const SizedBox(height: 20),
-            Text(mensaje, style: const TextStyle(color: Colors.red)),
-          ],
+                ///TODO: meter un spinner de carga para la espera
+                onPressed: login,
+              ),
+              const SizedBox(height: 24),
+              AppBotonPrimario(
+                //Btn de Registro
+                tamAncho: 240,
+                tamAlto: 48,
+                texto: 'Registrarse',
+                onPressed: goToRegister,
+              ),
+              const SizedBox(height: 20),
+              Text(mensaje, style: const TextStyle(color: AppColores.error)),
+            ],
+          ),
         ),
       ),
     );

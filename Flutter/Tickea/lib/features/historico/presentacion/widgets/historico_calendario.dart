@@ -7,6 +7,7 @@ import 'package:tickea/core/routes/app_router.dart';
 import 'package:tickea/core/theme/app_styles.dart';
 import 'package:tickea/features/historico/presentacion/providers/historico_provider.dart';
 import 'package:tickea/features/registro/registro_provider.dart';
+import 'package:tickea/widgets/app_popups.dart';
 
 class HistoricoCalendario extends StatelessWidget {
   final DateTime? rangoFin;
@@ -72,6 +73,9 @@ class HistoricoCalendario extends StatelessWidget {
         }
       },
       calendarStyle: CalendarStyle(
+        disabledTextStyle: AppEstiloTexto.cuerpo.copyWith(
+          color: AppColores.grisClaro,
+        ),
         isTodayHighlighted: true,
         defaultTextStyle: AppEstiloTexto.cuerpo.copyWith(fontWeight: FontWeight.w900),
         rangeHighlightColor: AppColores.grisPrimari.withOpacity(0.3),
@@ -148,6 +152,22 @@ class HistoricoCalendario extends StatelessWidget {
       ),
       daysOfWeekHeight: AppTamanios.xl,
       calendarBuilders: CalendarBuilders(
+        markerBuilder: (context, dia, eventos) {
+          if (!isSameDay(dia, DateTime.now())) {
+            return const SizedBox.shrink();
+          }
+          return IgnorePointer(
+            ignoring: true,
+            child: SizedBox.expand(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColores.primario, width: 2),
+                  borderRadius: BorderRadius.circular(AppTamanios.sm),
+                ),
+              ),
+            ),
+          );
+        },
         defaultBuilder: (context, dia, diaInicio) {
           final isDiaRegistrado = _isDiaRegistrado(dia);
           return Stack(
@@ -201,18 +221,8 @@ class HistoricoCalendario extends StatelessWidget {
         todayBuilder: (context, dia, diaInicio) {
           bool isRegistrado = _isDiaRegistrado(dia);
           return DecoratedBox(
-            decoration: BoxDecoration(
-              boxShadow: AppSombra.contenedores(
-                color: AppColores.secundariOscuro,
-                difuminado: 2,
-                ejeH: -.5,
-                ejeV: -.5,
-                opacidad: .2,
-                direccion: BlurStyle.solid,
-              ),
+            decoration: const BoxDecoration(
               color: AppColores.fondo,
-              border: Border.all(width: 2, color: !isRegistrado ? AppColores.secundariOscuro : AppColores.grisClaro),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
               children: [
@@ -228,6 +238,31 @@ class HistoricoCalendario extends StatelessWidget {
                 ),
               ],
             ),
+          );
+        },
+        disabledBuilder: (context, day, focusedDay) {
+          // UI por defecto de "deshabilitado" + interceptar el tap
+          final textStyle = AppEstiloTexto.cuerpo.copyWith(
+            fontSize: AppTamanios.md,
+            color: AppColores.grisClaro,
+            shadows: AppExtraBold.extraBold(AppColores.grisClaro, .2),
+          );
+
+          final child = Center(
+            child: Text('${day.day}', style: textStyle),
+          );
+
+          if (HistoricoModo.rango == modo) return child;
+
+          return InkWell(
+            onTap: () => AppPopup.alerta(
+              context: context,
+              titulo: 'Día no registrado',
+              contenido: 'No hay registros para el día seleccionado. Por favor, selecciona otro día.',
+              textoOk: 'Entendido',
+            ),
+            borderRadius: BorderRadius.circular(8),
+            child: child,
           );
         },
       ),

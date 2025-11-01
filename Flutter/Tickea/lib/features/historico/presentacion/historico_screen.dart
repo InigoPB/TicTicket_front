@@ -101,13 +101,20 @@ class _HistoricoView extends StatelessWidget {
               ModoSelector(modo: estado.modo, onCambiar: notificacion.setMode),
               const SizedBox(height: AppTamanios.lg),
               Expanded(
-                child: HistoricoCalendario(
-                    modo: estado.modo,
-                    rangoFin: estado.rangoHasta,
-                    rangoInicio: estado.rangoDesde,
-                    diaSeleccionado: estado.diaSeleccionado,
-                    onDiaSeleccionado: notificacion.seleccionarDia,
-                    onRangoSeleccionado: notificacion.selaccionarRango),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // centra vertical
+                  crossAxisAlignment: CrossAxisAlignment.center, // centra horizontal
+                  children: [
+                    HistoricoCalendario(
+                      modo: estado.modo,
+                      rangoFin: estado.rangoHasta,
+                      rangoInicio: estado.rangoDesde,
+                      diaSeleccionado: estado.diaSeleccionado,
+                      onDiaSeleccionado: notificacion.seleccionarDia,
+                      onRangoSeleccionado: notificacion.selaccionarRango,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: AppTamanios.base),
               Row(

@@ -22,29 +22,41 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
       appBar: const AppCabecero(
         ruta: '/login',
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            AppBotonImagen(
-              tamAncho: 200,
-              tamAlto: 200,
-              textoTitulo: 'Nuevo Registro',
-              imagenNormal: 'assets/img/icon_CAMARA_btn_inicio.png',
-              imagenPulsado: 'assets/img/icon_CAMARA_btn_inicio_CLICK.png',
-              onPressed: () => goToRute('/nuevoRegistro'),
+      body: LayoutBuilder(
+        builder: (ctx, box) {
+          final alturaresp = box.maxHeight;
+          return SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: alturaresp),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  // ⇩ reparte el espacio arriba / entre / abajo
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    AppBotonImagen(
+                      tamAncho: 200,
+                      tamAlto: 200,
+                      textoTitulo: 'Nuevo Registro',
+                      imagenNormal: 'assets/img/icon_CAMARA_btn_inicio.png',
+                      imagenPulsado: 'assets/img/icon_CAMARA_btn_inicio_CLICK.png',
+                      onPressed: () => context.go('/nuevoRegistro'),
+                    ),
+                    AppBotonImagen(
+                      tamAncho: 200,
+                      tamAlto: 200,
+                      textoTitulo: 'Historico',
+                      imagenNormal: 'assets/img/icon_CALENDARIO_btn_inicio.png',
+                      imagenPulsado: 'assets/img/icon_CALENDARIO_btn_inicio_CLICK.png',
+                      onPressed: () => context.go('/historico'),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            AppBotonImagen(
-              tamAncho: 200,
-              tamAlto: 200,
-              textoTitulo: 'Historico',
-              imagenNormal: 'assets/img/icon_CALENDARIO_btn_inicio.png',
-              imagenPulsado: 'assets/img/icon_CALENDARIO_btn_inicio_CLICK.png',
-              onPressed: () => goToRute('/historico'),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
