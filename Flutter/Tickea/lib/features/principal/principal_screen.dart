@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tickea/core/theme/app_styles.dart';
@@ -19,16 +20,22 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColores.fondo,
-      appBar: const AppCabecero(
-        ruta: '/login',
+      appBar: AppCabecero(
+        mostrarAtras: true,
+        onAtras: () async {
+          await FirebaseAuth.instance.signOut();
+          if (context.mounted) context.go('/login');
+        },
+        logoAsset: 'assets/img/logo_bar.png',
+        backgroundColor: AppColores.fondo,
       ),
       body: LayoutBuilder(
         builder: (ctx, box) {
-          final alturaresp = box.maxHeight;
+          final h = box.maxHeight;
           return SingleChildScrollView(
             physics: const ClampingScrollPhysics(),
             child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: alturaresp),
+              constraints: BoxConstraints(minHeight: h),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

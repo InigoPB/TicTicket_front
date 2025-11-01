@@ -100,8 +100,8 @@ class HistoricoHttpApi implements HistoricoApi {
     final hastaFormateada = _formateoFecha(hasta);
     final uri = _constructorUri('/tickea/ticket-items/rango', {
       'uid': uid,
-      'desde': desdeFormateada,
-      'hasta': hastaFormateada,
+      'fechaInicio': desdeFormateada,
+      'fechaFin': hastaFormateada,
     });
 
     _logHttp('GET', uri: uri);

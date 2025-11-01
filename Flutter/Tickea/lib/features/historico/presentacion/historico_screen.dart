@@ -100,6 +100,12 @@ class _HistoricoView extends StatelessWidget {
             children: [
               ModoSelector(modo: estado.modo, onCambiar: notificacion.setMode),
               const SizedBox(height: AppTamanios.lg),
+              if (estado.modo == HistoricoModo.rango)
+                const Positioned(
+                  top: 50,
+                  right: 8,
+                  child: _LimpiarRangoBtn(),
+                ),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center, // centra vertical
@@ -151,6 +157,48 @@ class _HistoricoView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LimpiarRangoBtn extends StatelessWidget {
+  const _LimpiarRangoBtn();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        FloatingActionButton.small(
+          heroTag: null, // evita conflictos si ya hay más FABs
+          onPressed: () {
+            context.read<HistoricoNotificador>().reset();
+
+            // (Opcional) feedback visual rápido
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Rango limpiado')),
+            );
+          },
+          backgroundColor: AppColores.fondo,
+          foregroundColor: AppColores.primario,
+          child: const Icon(Icons.refresh),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          decoration: BoxDecoration(
+            color: AppColores.fondo.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: AppColores.primariOscuro, width: 1),
+          ),
+          child: Text(
+            'Limpiar rango',
+            style: AppEstiloTexto.cuerpo.copyWith(
+              fontSize: AppTamanios.sm,
+              color: AppColores.primario,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

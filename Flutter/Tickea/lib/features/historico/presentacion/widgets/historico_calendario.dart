@@ -15,7 +15,7 @@ class HistoricoCalendario extends StatelessWidget {
   final DateTime? rangoInicio;
   final DateTime? diaSeleccionado;
   final void Function(DateTime) onDiaSeleccionado;
-  final void Function(DateTime inicio, DateTime fin) onRangoSeleccionado;
+  final void Function(DateTime? inicio, DateTime? fin) onRangoSeleccionado;
 
   const HistoricoCalendario({
     super.key,
@@ -51,14 +51,23 @@ class HistoricoCalendario extends StatelessWidget {
         modo == HistoricoModo.rango ? RangeSelectionMode.toggledOn : RangeSelectionMode.toggledOff;
 
     return TableCalendar(
-      enabledDayPredicate: (dia) => _isDiaRegistrado(dia),
+      enabledDayPredicate: (dia) => modo == HistoricoModo.rango ? true : _isDiaRegistrado(dia),
       locale: 'es_ES',
       firstDay: primerDia,
       lastDay: ultimoDia,
       focusedDay: diaSeleccionado ?? rangoInicio ?? hoy,
       currentDay: DateTime(hoy.year, hoy.month, hoy.day),
-      selectedDayPredicate: (day) =>
-          modo == HistoricoModo.dia && isSameDay(day, diaSeleccionado) && diaSeleccionado != null,
+      selectedDayPredicate: (day) {
+        final seleccionadoEnDia =
+            modo == HistoricoModo.dia && diaSeleccionado != null && isSameDay(day, diaSeleccionado);
+
+        final seleccionadoPrimerTapRango = modo == HistoricoModo.rango &&
+            rangoFin == null &&
+            diaSeleccionado != null &&
+            isSameDay(day, diaSeleccionado);
+
+        return seleccionadoEnDia || seleccionadoPrimerTapRango;
+      },
       rangeStartDay: modo == HistoricoModo.rango ? rangoInicio : null,
       rangeEndDay: modo == HistoricoModo.rango ? rangoFin : null,
       rangeSelectionMode: rangoSeleccionado,
@@ -68,9 +77,8 @@ class HistoricoCalendario extends StatelessWidget {
         }
       },
       onRangeSelected: (inicio, fin, focusDia) {
-        if (modo == HistoricoModo.rango && inicio != null && fin != null) {
-          onRangoSeleccionado(inicio, fin);
-        }
+        if (modo != HistoricoModo.rango) return;
+        onRangoSeleccionado(inicio, fin);
       },
       calendarStyle: CalendarStyle(
         disabledTextStyle: AppEstiloTexto.cuerpo.copyWith(
@@ -152,6 +160,65 @@ class HistoricoCalendario extends StatelessWidget {
       ),
       daysOfWeekHeight: AppTamanios.xl,
       calendarBuilders: CalendarBuilders(
+        rangeStartBuilder: (context, dia, focusedDay) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColores.secundario,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(AppTamanios.xxl),
+                bottomLeft: Radius.circular(AppTamanios.xxl),
+              ),
+              boxShadow: AppSombra.contenedores(),
+            ),
+            child: Center(
+              child: Text(
+                '${dia.day}',
+                style: AppEstiloTexto.subtitulo.copyWith(
+                  color: AppColores.fondo,
+                  shadows: AppExtraBold.extraBold(AppColores.fondo, .5),
+                ),
+              ),
+            ),
+          );
+        },
+        rangeEndBuilder: (context, dia, focusedDay) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColores.secundario,
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(AppTamanios.xxl),
+                bottomRight: Radius.circular(AppTamanios.xxl),
+              ),
+              boxShadow: AppSombra.contenedores(),
+            ),
+            child: Center(
+              child: Text(
+                '${dia.day}',
+                style: AppEstiloTexto.subtitulo.copyWith(
+                  color: AppColores.fondo,
+                  shadows: AppExtraBold.extraBold(AppColores.fondo, .5),
+                ),
+              ),
+            ),
+          );
+        },
+        withinRangeBuilder: (context, dia, focusedDay) {
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColores.grisPrimari.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(AppTamanios.sm),
+            ),
+            child: Center(
+              child: Text(
+                '${dia.day}',
+                style: AppEstiloTexto.cuerpo.copyWith(
+                  color: AppColores.primario,
+                  shadows: AppExtraBold.extraBold(AppColores.secundariOscuro, .2),
+                ),
+              ),
+            ),
+          );
+        },
         markerBuilder: (context, dia, eventos) {
           if (!isSameDay(dia, DateTime.now())) {
             return const SizedBox.shrink();
@@ -182,15 +249,6 @@ class HistoricoCalendario extends StatelessWidget {
                   ),
                 ),
               ),
-              if (!isDiaRegistrado)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Opacity(
-                      opacity: 0.8,
-                      child: Image.asset('assets/img/tachado.png', fit: BoxFit.scaleDown),
-                    ),
-                  ),
-                ),
             ],
           );
         },
