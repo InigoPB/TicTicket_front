@@ -42,13 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
         prov.setDiasRegistrados(dias);
       }
 
-      ///TODO: meter un spinner de carga para la espera
-
       goToPrincipal();
     } on FirebaseAuthException catch (e) {
       setState(
         () {
           AppPopup.confirmacion(
+            alerta: true,
             context: context,
             titulo: 'Ups!',
             contenido: 'Error al iniciar sesión: ${e.message}',
@@ -112,8 +111,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 tamAncho: 240,
                 tamAlto: 48,
                 texto: 'Inicio',
-
-                ///TODO: meter un spinner de carga para la espera
                 onPressed: login,
               ),
               const SizedBox(height: 24),

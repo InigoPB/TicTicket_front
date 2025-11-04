@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image.asset('assets/img/tickea_logo.png', height: 100),
             const SizedBox(height: 20),
-            const Text("Cargando TICKea...", style: TextStyle(fontSize: 20)),
+            const Text("Cargando Tickea...", style: TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
             const CircularProgressIndicator(
               color: AppColores.primario,

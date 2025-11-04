@@ -89,6 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //Mensaje de éxito
       setState(() {
         AppPopup.confirmacion(
+          alerta: false,
           context: context,
           titulo: '✔️ Éxito',
           contenido: 'Usuario creado con éxito. Ya puedes iniciar sesión.',

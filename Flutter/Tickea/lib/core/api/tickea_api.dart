@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tickea/core/formateadores/fecha_formato.dart';
+import 'package:tickea/core/theme/app_styles.dart';
 
 class TickeaApi {
   static const String baseUrl = 'http://192.168.137.1:8080';

@@ -27,6 +27,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
   bool _pidiendoPermiso = false;
   bool _flashOn = true;
   bool _flashSoportado = true;
+  bool _enviandoTicket = false;
 
   @override
   void initState() {
@@ -220,6 +221,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
 
   Future<void> _postCapturaPopup(OcrProvider ocrProv, RegistroProvider regProv) async {
     await AppPopup.confirmacion(
+        alerta: false,
         context: context,
         titulo: '¿Otra foto?',
         contenido: 'Llevas ${ocrProv.fotosProcesadas} fotos. ¿Quieres capturar otra?',
@@ -437,7 +439,7 @@ class _NuevaFotoState extends State<NuevaFoto> {
                                     : AppColores.textoOscuro,
                               ),
                               label: Text(
-                                'Borrar última',
+                                'Borrar últ.',
                                 style: AppEstiloTexto.notaXS.copyWith(
                                   color: (context.watch<OcrProvider>().fotosProcesadas > 0)
                                       ? AppColores.grisClaro
@@ -461,6 +463,30 @@ class _NuevaFotoState extends State<NuevaFoto> {
                                       CircularProgressIndicator(),
                                       SizedBox(height: 12),
                                       Text('Leyendo ticket…'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                          if (_enviandoTicket) ...[
+                            ModalBarrier(
+                              dismissible: false,
+                              color: Colors.black.withOpacity(0.4),
+                            ),
+                            Center(
+                              child: Card(
+                                elevation: 8,
+                                child: Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const CircularProgressIndicator(
+                                        color: AppColores.secundariOscuro,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      AppTexto.textoSpinner('Cargando ticket...'),
                                     ],
                                   ),
                                 ),
@@ -588,9 +614,6 @@ class _NuevaFotoState extends State<NuevaFoto> {
   }
 
   Future<void> _enviarResultadosSpring(OcrProvider ocrProv, RegistroProvider regProv) async {
-    const CircularProgressIndicator(
-      color: AppColores.primario,
-    );
     try {
       final api = TickeaApi();
       final fecha = _fechaFormatoBack(regProv.strFecha); // de dd_MM_yyyy -> yyyy-MM-dd
@@ -598,11 +621,17 @@ class _NuevaFotoState extends State<NuevaFoto> {
 
       debugPrint('[NuevaFoto] Enviando ticket: uid=${regProv.uidUser}, fecha=$fecha, lineas=${lineas.length}');
 
+      if (mounted) {
+        setState(() => _enviandoTicket = true);
+      }
+
       final respuesta = await api.enviarTicket(
         uidUsuario: regProv.uidUser,
         fecha: fecha,
         productos: lineas,
       );
+
+      setState(() => _enviandoTicket = false);
 
       if (respuesta.statusCode >= 200 && respuesta.statusCode < 300) {
         if (!mounted) return;
@@ -674,7 +703,7 @@ class _CargandoView extends StatelessWidget {
           color: AppColores.secundariOscuro,
         ),
         const SizedBox(height: 12),
-        Text(texto, style: AppEstiloTexto.notaM),
+        AppTexto.textoSpinner(texto),
       ]),
     );
   }

@@ -214,6 +214,21 @@ class AppTexto {
     );
   }
 
+  static Widget textoSpinner(
+    String texto, {
+    TextAlign align = TextAlign.center,
+    int maxLines = 2,
+    TextOverflow overflow = TextOverflow.ellipsis,
+  }) {
+    return Text(
+      texto,
+      textAlign: align,
+      maxLines: maxLines,
+      overflow: overflow,
+      style: AppEstiloTexto.notaM.copyWith(color: AppColores.fondo),
+    );
+  }
+
   static Widget textoExito(
     String texto, {
     TextAlign align = TextAlign.start,
